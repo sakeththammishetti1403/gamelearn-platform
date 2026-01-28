@@ -1,11 +1,14 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL =
+    import.meta.env.VITE_API_URL || 'https://gamelearn-platform.onrender.com/api';
 
 // Create axios instance
 const api = axios.create({
     baseURL: API_URL,
+    withCredentials: true,
 });
+
 
 // Add token to requests
 api.interceptors.request.use((config) => {
