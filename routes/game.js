@@ -6,6 +6,7 @@ const Section = require('../models/Section');
 const Progress = require('../models/Progress');
 const Module = require('../models/Module');
 const GameFactory = require('../engine/GameFactory');
+const { checkModuleCompletion } = require('../services/completionService');
 
 // @desc    Submit game result
 // @route   POST /api/game/:sectionId/submit
@@ -98,6 +99,9 @@ router.post('/:sectionId/submit', protect, async (req, res) => {
         } else {
             await progress.save();
         }
+
+        // Check for module completion and rewards
+        await checkModuleCompletion(req.user._id, section.moduleId);
 
         res.json({
             result,

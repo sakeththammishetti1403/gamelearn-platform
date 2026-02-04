@@ -14,6 +14,10 @@ const subjectSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
     },
+    isCore: {
+        type: Boolean,
+        default: false,
+    },
     image: {
         type: String,
         default: '/images/subjects/default.png',

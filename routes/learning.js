@@ -6,6 +6,8 @@ const Module = require('../models/Module');
 const Section = require('../models/Section');
 const Progress = require('../models/Progress');
 const Game = require('../models/Game');
+const CareerTrack = require('../models/CareerTrack');
+const { checkModuleCompletion } = require('../services/completionService');
 
 // @desc    Get all subjects
 // @route   GET /api/learning/subjects
@@ -28,7 +30,22 @@ router.get('/modules/:subjectId', protect, async (req, res) => {
             subjectId: req.params.subjectId,
             isActive: true
         }).sort({ order: 1 });
-        res.json(modules);
+
+        // Get user's active career track
+        let userCareer = null;
+        if (req.user.activeCareerTrack) {
+            userCareer = await CareerTrack.findById(req.user.activeCareerTrack);
+        }
+
+        const modulesWithGating = modules.map(module => {
+            return {
+                ...module.toObject(),
+                isLocked: false,
+                lockReason: ''
+            };
+        });
+
+        res.json(modulesWithGating);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -39,6 +56,10 @@ router.get('/modules/:subjectId', protect, async (req, res) => {
 // @access  Private
 router.get('/sections/:moduleId', protect, async (req, res) => {
     try {
+        const module = await Module.findById(req.params.moduleId);
+        if (!module) return res.status(404).json({ message: 'Module not found' });
+
+        // All modules are now accessible regardless of career track
         const sections = await Section.find({ moduleId: req.params.moduleId })
             .sort({ order: 1 })
             .populate('gameConfig');
@@ -49,31 +70,15 @@ router.get('/sections/:moduleId', protect, async (req, res) => {
             moduleId: req.params.moduleId,
         });
 
-        // Map progress to sections
+        // All sections are now accessible
         const sectionsWithProgress = sections.map(section => {
             const userProgress = progress.find(p => p.sectionId.toString() === section._id.toString());
             return {
                 ...section.toObject(),
-                userStatus: userProgress ? userProgress.status : 'LOCKED',
+                userStatus: userProgress ? userProgress.status : 'UNLOCKED',
                 userScore: userProgress ? userProgress.score : 0,
             };
         });
-
-        // Unlock the first section if no progress exists
-        if (sectionsWithProgress.length > 0 && !progress.length) {
-            sectionsWithProgress[0].userStatus = 'UNLOCKED';
-            // Create initial progress record
-            const module = await Module.findById(req.params.moduleId);
-            if (module) {
-                await Progress.create({
-                    userId: req.user._id,
-                    subjectId: module.subjectId,
-                    moduleId: req.params.moduleId,
-                    sectionId: sectionsWithProgress[0]._id,
-                    status: 'UNLOCKED'
-                });
-            }
-        }
 
         res.json(sectionsWithProgress);
     } catch (error) {
@@ -101,13 +106,16 @@ router.post('/section/:sectionId/complete', protect, async (req, res) => {
             sectionId: req.params.sectionId,
         });
 
+        // Section access is always open
         if (!progress) {
-            // If no progress record exists, it means the user hasn't unlocked this section yet.
-            return res.status(403).json({ message: 'Section is locked or not started' });
-        }
-
-        if (progress.status === 'LOCKED') {
-            return res.status(403).json({ message: 'Section is locked' });
+            const module = await Module.findById(section.moduleId);
+            progress = await Progress.create({
+                userId: req.user._id,
+                subjectId: module.subjectId,
+                moduleId: section.moduleId,
+                sectionId: req.params.sectionId,
+                status: 'UNLOCKED'
+            });
         }
 
         // Idempotency: If already completed, just return success
@@ -151,6 +159,9 @@ router.post('/section/:sectionId/complete', protect, async (req, res) => {
             }
         }
 
+        // Check for module completion and rewards
+        await checkModuleCompletion(req.user._id, section.moduleId);
+
         res.json({ message: 'Section completed', nextSectionId: nextSection ? nextSection._id : null });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -173,16 +184,36 @@ router.get('/stats', protect, async (req, res) => {
         const totalMinutes = progress.reduce((sum, p) => sum + (p.timeSpent || 0), 0);
         const hoursLearned = parseFloat((totalMinutes / 60).toFixed(1));
 
-        // Levels Completed (Modules where all sections are COMPLETED)
-        const completedSections = progress.filter(p => p.status === 'COMPLETED');
-        const moduleIds = [...new Set(completedSections.filter(p => p.moduleId).map(p => p.moduleId.toString()))];
+        // Levels & Points Splitting
+        let coreLevelsCompleted = 0;
+        let specializationLevelsCompleted = 0;
+        let corePoints = 0;
+        let specializationPoints = 0;
 
-        let levelsCompleted = 0;
-        for (const moduleId of moduleIds) {
+        const allModuleIds = [...new Set(progress.filter(p => p.moduleId).map(p => p.moduleId.toString()))];
+        const modulesData = await Module.find({ _id: { $in: allModuleIds } });
+
+        for (const moduleId of allModuleIds) {
+            const module = modulesData.find(m => m._id.toString() === moduleId);
+            if (!module) continue;
+
             const totalSectionsInModule = await Section.countDocuments({ moduleId });
             const completedSectionsInModule = completedSections.filter(p => p.moduleId && p.moduleId.toString() === moduleId).length;
-            if (totalSectionsInModule > 0 && totalSectionsInModule === completedSectionsInModule) {
-                levelsCompleted++;
+
+            const moduleScore = progress
+                .filter(p => p.moduleId && p.moduleId.toString() === moduleId)
+                .reduce((sum, p) => sum + (p.score || 0), 0);
+
+            if (module.isCore) {
+                corePoints += moduleScore;
+                if (totalSectionsInModule > 0 && totalSectionsInModule === completedSectionsInModule) {
+                    coreLevelsCompleted++;
+                }
+            } else {
+                specializationPoints += moduleScore;
+                if (totalSectionsInModule > 0 && totalSectionsInModule === completedSectionsInModule) {
+                    specializationLevelsCompleted++;
+                }
             }
         }
 
@@ -225,12 +256,37 @@ router.get('/stats', protect, async (req, res) => {
             }
         }
 
+        // Accuracy %
+        const totalAttempts = progress.reduce((sum, p) => sum + (p.attempts || 0), 0);
+        const totalAccuracy = totalAttempts > 0
+            ? Math.round((completedSections.length / totalAttempts) * 100)
+            : 0;
+
+        // Skill Distribution (Subject-wise points)
+        const subjects = await Subject.find({ isActive: true });
+        const skillDistribution = await Promise.all(subjects.map(async (subject) => {
+            const subjectProgress = progress.filter(p => p.subjectId && p.subjectId.toString() === subject._id.toString());
+            const subjectScore = subjectProgress.reduce((sum, p) => sum + (p.score || 0), 0);
+            return {
+                subject: subject.title,
+                score: subjectScore,
+                isCore: subject.isCore
+            };
+        }));
+
         res.json({
-            levelsCompleted,
+            levelsCompleted: coreLevelsCompleted + specializationLevelsCompleted,
+            fundamentalLevelsCompleted: coreLevelsCompleted,
+            pathSpecificLevelsCompleted: specializationLevelsCompleted,
             dayStreak: streak,
-            totalPoints,
+            totalPoints: corePoints + specializationPoints,
+            fundamentalPoints: corePoints,
+            pathSpecificPoints: specializationPoints,
             hoursLearned,
-            gamesPlayed
+            gamesPlayed,
+            accuracy: totalAccuracy,
+            totalAttempts,
+            skillDistribution
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -243,6 +299,8 @@ router.get('/stats', protect, async (req, res) => {
 router.get('/detailed-progress', protect, async (req, res) => {
     try {
         if (!req.user) return res.status(401).json({ message: 'User not found' });
+
+        const userCareer = req.user.activeCareerTrack ? await CareerTrack.findById(req.user.activeCareerTrack) : null;
 
         const subjects = await Subject.find({ isActive: true });
         const detailedProgress = await Promise.all(subjects.map(async (subject) => {
@@ -261,12 +319,26 @@ router.get('/detailed-progress', protect, async (req, res) => {
                     moduleId: module._id
                 }).sort({ updatedAt: -1 }).populate('sectionId');
 
+                const unlockedSections = await Progress.countDocuments({
+                    userId: req.user._id,
+                    moduleId: module._id,
+                    status: 'UNLOCKED'
+                });
+
+                // Career Gating REMOVED - All content is unlocked
+                let isLocked = false;
+                let lockReason = '';
+
                 return {
                     _id: module._id,
                     title: module.title,
                     order: module.order,
+                    isCore: module.isCore,
+                    isLocked,
+                    lockReason,
                     totalSections,
                     completedSections,
+                    unlockedSections,
                     progress: totalSections > 0 ? Math.round((completedSections / totalSections) * 100) : 0,
                     lastSection: lastAccessedSection && lastAccessedSection.sectionId ? lastAccessedSection.sectionId.title : 'Not started'
                 };
@@ -278,6 +350,7 @@ router.get('/detailed-progress', protect, async (req, res) => {
             return {
                 _id: subject._id,
                 title: subject.title,
+                isCore: subject.isCore,
                 image: subject.image,
                 modules: moduleProgress,
                 overallProgress: totalSubjectSections > 0 ? Math.round((completedSubjectSections / totalSubjectSections) * 100) : 0
@@ -330,6 +403,7 @@ router.get('/learning-path', protect, async (req, res) => {
             return {
                 _id: subject._id,
                 title: subject.title,
+                isCore: subject.isCore,
                 description: subject.description,
                 image: subject.image || 'https://via.placeholder.com/150',
                 progress: progressPercent,
@@ -339,6 +413,39 @@ router.get('/learning-path', protect, async (req, res) => {
         }));
 
         res.json(learningPath);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// @desc    Get activity heatmap data (last 365 days)
+// @route   GET /api/learning/heatmap
+// @access  Private
+router.get('/heatmap', protect, async (req, res) => {
+    try {
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+        const activity = await Progress.aggregate([
+            {
+                $match: {
+                    userId: req.user._id,
+                    status: 'COMPLETED',
+                    completedAt: { $gte: oneYearAgo }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: "%Y-%m-%d", date: "$completedAt" }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id": 1 } }
+        ]);
+
+        res.json(activity);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

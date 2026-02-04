@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { getDetailedProgress } from '../../services/api';
 import Loading from '../Common/Loading';
 import ErrorMessage from '../Common/ErrorMessage';
+import AnalyticsPieChart from './Analytics/AnalyticsPieChart';
+import AnalyticsBarChart from './Analytics/AnalyticsBarChart';
 
 function Progress() {
     const [progressData, setProgressData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState({ completed: 0, available: 0, notStarted: 0, total: 0 });
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -17,7 +20,9 @@ function Progress() {
         setError('');
         try {
             const response = await getDetailedProgress();
-            setProgressData(response.data);
+            const data = response.data;
+            setProgressData(data);
+            calculateStats(data);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to load progress data');
         } finally {
@@ -25,86 +30,113 @@ function Progress() {
         }
     };
 
+    const calculateStats = (data) => {
+        let completed = 0;
+        let available = 0;
+        let total = 0;
+
+        data.forEach(subject => {
+            subject.modules.forEach(module => {
+                completed += module.completedSections || 0;
+                available += module.unlockedSections || 0;
+                total += module.totalSections || 0;
+            });
+        });
+
+        const notStarted = total - completed - available;
+        setStats({ completed, available, notStarted, total });
+    };
+
     if (loading) return <div style={{ padding: '60px 40px' }}><Loading message="Analyzing your progress..." /></div>;
     if (error) return <div style={{ padding: '60px 40px' }}><ErrorMessage message={error} onRetry={loadProgress} /></div>;
 
     return (
-        <div className="fade-in" style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
-            <header style={{ marginBottom: '48px' }}>
-                <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#2E3A59', marginBottom: '12px' }}>Learning Progress</h1>
-                <p style={{ color: '#7A859E', fontSize: '18px' }}>Track your journey across all subjects and modules.</p>
+        <div className="container fade-in">
+            <header style={{ marginBottom: '40px' }}>
+                <h1 style={{ fontSize: '28px', color: 'var(--text-main)', marginBottom: '8px' }}>Learning Progress</h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '16px' }}>Track your journey across all subjects and modules.</p>
             </header>
 
-            {progressData.length === 0 ? (
+            {progressData.length > 0 && (
                 <div style={{
-                    textAlign: 'center',
-                    padding: '80px 40px',
-                    backgroundColor: '#fff',
-                    borderRadius: '24px',
-                    border: '1px solid #E5E9F2',
-                    boxShadow: '0 2px 8px rgba(46, 58, 89, 0.04)'
+                    display: 'flex',
+                    gap: '24px',
+                    marginBottom: '48px',
+                    flexWrap: 'wrap',
+                    alignItems: 'stretch'
                 }}>
-                    <div style={{ fontSize: '48px', marginBottom: '24px' }}>📈</div>
-                    <h3 style={{ fontSize: '20px', color: '#2E3A59', marginBottom: '12px' }}>No progress data yet</h3>
-                    <p style={{ color: '#7A859E' }}>Start a course to see your progress here!</p>
+                    <div className="card" style={{ flex: '1', minWidth: '300px' }}>
+                        <AnalyticsPieChart
+                            completed={stats.completed}
+                            inProgress={stats.available}
+                            notStarted={stats.notStarted}
+                        />
+                    </div>
+                    <div className="card" style={{ flex: '2', minWidth: '400px' }}>
+                        <AnalyticsBarChart subjects={progressData} />
+                    </div>
+                </div>
+            )}
+
+            {progressData.length === 0 ? (
+                <div className="card" style={{ textAlign: 'center', padding: '60px 40px' }}>
+                    <div style={{ fontSize: '48px', marginBottom: '24px', opacity: 0.8 }}>📈</div>
+                    <h3 style={{ fontSize: '20px', color: 'var(--text-main)', marginBottom: '12px' }}>No progress data yet</h3>
+                    <p style={{ color: 'var(--text-secondary)' }}>Start a course to see your progress here!</p>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                     {progressData.map((subject) => (
-                        <div key={subject._id} style={{
-                            backgroundColor: '#fff',
-                            borderRadius: '32px',
-                            padding: '40px',
-                            border: '1px solid #E5E9F2',
-                            boxShadow: '0 4px 20px rgba(46, 58, 89, 0.03)'
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '40px' }}>
+                        <div key={subject._id} className="card" style={{ padding: '32px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '32px', flexWrap: 'wrap' }}>
                                 <div style={{
-                                    width: '80px',
-                                    height: '80px',
-                                    borderRadius: '20px',
+                                    width: '64px',
+                                    height: '64px',
+                                    borderRadius: '16px',
                                     backgroundImage: `url(${subject.image})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
-                                    border: '1px solid #E5E9F2'
+                                    border: '1px solid var(--border-color)'
                                 }} />
-                                <div style={{ flex: 1 }}>
-                                    <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#2E3A59', marginBottom: '12px' }}>{subject.title}</h2>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                        <div style={{ flex: 1, height: '8px', backgroundColor: '#EEF2FF', borderRadius: '4px', overflow: 'hidden', maxWidth: '400px' }}>
-                                            <div style={{ width: `${subject.overallProgress}%`, height: '100%', backgroundColor: '#4F7DF3', transition: 'width 1.5s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                                <div style={{ flex: 1, minWidth: '200px' }}>
+                                    <h2 style={{ fontSize: '22px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '12px' }}>{subject.title}</h2>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                        <div style={{ flex: 1, height: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '4px', overflow: 'hidden', maxWidth: '300px' }}>
+                                            <div style={{ width: `${subject.overallProgress}%`, height: '100%', backgroundColor: 'var(--primary)', transition: 'width 1.5s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                                         </div>
-                                        <span style={{ fontWeight: '700', color: '#4F7DF3', fontSize: '15px' }}>{subject.overallProgress}% Overall</span>
+                                        <span style={{ fontWeight: '600', color: 'var(--primary)', fontSize: '14px' }}>{subject.overallProgress}% Overall</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                                 {subject.modules.map((module) => (
                                     <div key={module._id} style={{
-                                        padding: '24px',
-                                        borderRadius: '20px',
-                                        backgroundColor: '#F6F8FC',
-                                        border: '1px solid #E5E9F2',
+                                        padding: '20px',
+                                        borderRadius: 'var(--radius-md)',
+                                        backgroundColor: 'var(--bg-app)',
+                                        border: '1px solid var(--border-color)',
                                         transition: 'var(--transition)'
                                     }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                            <span style={{ fontSize: '11px', fontWeight: '700', color: '#7A859E', letterSpacing: '0.5px' }}>MODULE {module.order}</span>
-                                            <span style={{ fontSize: '13px', fontWeight: '700', color: module.progress === 100 ? '#4CAF50' : '#4F7DF3' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-tertiary)', letterSpacing: '0.05em' }}>MODULE {module.order}</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '700', color: module.progress === 100 ? 'var(--status-success)' : 'var(--primary)' }}>
                                                 {module.progress}%
                                             </span>
                                         </div>
-                                        <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#2E3A59', marginBottom: '16px' }}>{module.title}</h4>
-                                        <div style={{ height: '6px', backgroundColor: '#E5E9F2', borderRadius: '3px', overflow: 'hidden', marginBottom: '16px' }}>
-                                            <div style={{ width: `${module.progress}%`, height: '100%', backgroundColor: module.progress === 100 ? '#4CAF50' : '#4F7DF3' }} />
+                                        <h4 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>{module.title}</h4>
+                                        <div style={{ height: '4px', backgroundColor: '#CBD5E1', borderRadius: '2px', overflow: 'hidden', marginBottom: '12px' }}>
+                                            <div style={{ width: `${module.progress}%`, height: '100%', backgroundColor: module.progress === 100 ? 'var(--status-success)' : 'var(--primary)' }} />
                                         </div>
-                                        <div style={{ fontSize: '13px', color: '#7A859E' }}>
-                                            <div style={{ marginBottom: '6px' }}>
-                                                Sections: <strong style={{ color: '#2E3A59' }}>{module.completedSections} / {module.totalSections}</strong>
+                                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                                            <div style={{ marginBottom: '4px' }}>
+                                                Sections: <strong style={{ color: 'var(--text-main)' }}>{module.completedSections} / {module.totalSections}</strong>
                                             </div>
-                                            <div style={{ color: '#7A859E', fontSize: '12px', fontStyle: 'italic' }}>
-                                                Last: {module.lastSection}
-                                            </div>
+                                            {module.lastSection && (
+                                                <div style={{ color: 'var(--text-tertiary)', fontStyle: 'italic', fontSize: '11px' }}>
+                                                    Last: {module.lastSection}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}

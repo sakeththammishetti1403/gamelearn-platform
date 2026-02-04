@@ -71,4 +71,82 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// ============================================
+// OAUTH ROUTES
+// ============================================
+
+const passport = require('passport');
+require('../config/passport')(passport);
+
+// @desc    Get current user
+// @route   GET /api/auth/me
+// @access  Private
+router.get('/me', async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        res.status(401).json({ message: 'Invalid token' });
+    }
+});
+
+// ============================================
+// GOOGLE OAUTH
+// ============================================
+
+router.get('/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+router.get('/google/callback',
+    passport.authenticate('google', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/auth/error` }),
+    (req, res) => {
+        const token = generateToken(req.user._id);
+        res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
+    }
+);
+
+// ============================================
+// GITHUB OAUTH
+// ============================================
+
+router.get('/github',
+    passport.authenticate('github', { scope: ['user:email'] })
+);
+
+router.get('/github/callback',
+    passport.authenticate('github', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/auth/error` }),
+    (req, res) => {
+        const token = generateToken(req.user._id);
+        res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
+    }
+);
+
+// ============================================
+// LINKEDIN OAUTH
+// ============================================
+
+router.get('/linkedin',
+    passport.authenticate('linkedin', { scope: ['r_emailaddress', 'r_liteprofile'] })
+);
+
+router.get('/linkedin/callback',
+    passport.authenticate('linkedin', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/auth/error` }),
+    (req, res) => {
+        const token = generateToken(req.user._id);
+        res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
+    }
+);
+
 module.exports = router;

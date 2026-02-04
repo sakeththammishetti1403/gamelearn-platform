@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { queueForSync } from './OfflineManager';
 
 const API_URL =
     import.meta.env.VITE_API_URL || 'https://gamelearn-platform.onrender.com/api';
@@ -41,11 +42,33 @@ export const login = (data) => api.post('/auth/login', data);
 export const getSubjects = () => api.get('/learning/subjects');
 export const getModules = (subjectId) => api.get(`/learning/modules/${subjectId}`);
 export const getSections = (moduleId) => api.get(`/learning/sections/${moduleId}`);
-export const completeContent = (sectionId) => api.post(`/learning/section/${sectionId}/complete`);
+
+export const completeContent = async (sectionId) => {
+    if (!navigator.onLine) {
+        await queueForSync('COMPLETE_CONTENT', { sectionId });
+        return { data: { message: 'Queued for sync' } };
+    }
+    return api.post(`/learning/section/${sectionId}/complete`);
+};
+
 export const submitGame = (sectionId, input) => api.post(`/game/${sectionId}/submit`, { input });
 export const getStudentStats = () => api.get('/learning/stats');
 export const getLearningPath = () => api.get('/learning/learning-path');
 export const getDetailedProgress = () => api.get('/learning/detailed-progress');
+
+// Leaderboard APIs
+export const getGlobalLeaderboard = () => api.get('/leaderboard/global');
+export const getSubjectLeaderboard = (subjectId) => api.get(`/leaderboard/subject/${subjectId}`);
+export const getWeeklyLeaderboard = () => api.get('/leaderboard/weekly');
+
+// Learning Heatmap
+export const getHeatmapData = () => api.get('/learning/heatmap');
+
+// Career APIs
+export const getCareerTracks = () => api.get('/career/tracks');
+export const getTrackDetail = (id) => api.get(`/career/tracks/${id}`);
+export const enrollInTrack = (trackId) => api.post('/career/enroll', { trackId });
+export const discoverCareers = (answers) => api.post('/career/discovery', { answers });
 
 // Instructor APIs
 export const createSubject = (data) => api.post('/instructor/subjects', data);

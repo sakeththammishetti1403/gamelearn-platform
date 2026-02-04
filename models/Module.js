@@ -18,6 +18,13 @@ const moduleSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
     },
+    isCore: {
+        type: Boolean,
+        default: true,
+    },
+    careerTags: [{
+        type: String
+    }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Module', moduleSchema);

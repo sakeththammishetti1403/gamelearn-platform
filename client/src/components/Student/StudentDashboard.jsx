@@ -1,81 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { getStudentStats, getLearningPath } from '../../services/api';
-import ModuleView from './ModuleView';
+import React, { Suspense } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import StatsCards from './StatsCards';
-import LearningPath from './LearningPath';
+import DashboardHome from './DashboardHome';
+import Profile from './Profile';
 import Courses from './Courses';
-import Progress from './Progress';
+import Roadmap from './Roadmap';
+import CareerHub from './CareerHub';
+import TrackDetail from './TrackDetail';
+import ModuleView from './ModuleView';
+import MultiplayerDashboard from '../Multiplayer/MultiplayerDashboard';
 import Reports from './Reports';
+import TopHeader from './TopHeader';
+import SupportPage from './SupportPage';
+import { CareerDataGate } from './Career/CareerDataGate';
+import ErrorBoundary from '../Common/ErrorBoundary';
+import SafeMode from '../Common/SafeMode';
 import Loading from '../Common/Loading';
-import ErrorMessage from '../Common/ErrorMessage';
 
-function DashboardHome() {
-    const { user } = useAuth();
-    const [stats, setStats] = useState(null);
-    const [path, setPath] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-
-    useEffect(() => {
-        loadDashboardData();
-    }, []);
-
-    const loadDashboardData = async () => {
-        setLoading(true);
-        setError('');
-        try {
-            const [statsRes, pathRes] = await Promise.all([
-                getStudentStats(),
-                getLearningPath()
-            ]);
-            setStats(statsRes.data);
-            setPath(pathRes.data);
-        } catch (err) {
-            setError(err.response?.data?.message || 'Failed to load dashboard data');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (loading) return <div style={{ padding: '60px 40px' }}><Loading message="Preparing your dashboard..." /></div>;
-    if (error) return <div style={{ padding: '60px 40px' }}><ErrorMessage message={error} onRetry={loadDashboardData} /></div>;
-
+const StudentDashboard = () => {
     return (
-        <div className="fade-in" style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
-            <header style={{ marginBottom: '48px' }}>
-                <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#2E3A59', marginBottom: '12px' }}>
-                    Welcome back, {user?.name.split(' ')[0]}! 👋
-                </h1>
-                <p style={{ color: '#7A859E', fontSize: '18px', fontWeight: '400' }}>
-                    Continue your learning journey where you left off.
-                </p>
-            </header>
-
-            {stats && <StatsCards stats={stats} />}
-            <LearningPath path={path} />
-        </div>
-    );
-}
-
-
-function StudentDashboard() {
-    return (
-        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#fcfcfc' }}>
+        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-app)' }}>
             <Sidebar />
-            <main style={{ flex: 1, marginLeft: '250px' }}>
-                <Routes>
-                    <Route path="/" element={<DashboardHome />} />
-                    <Route path="/courses" element={<Courses />} />
-                    <Route path="/progress" element={<Progress />} />
-                    <Route path="/reports" element={<Reports />} />
-                    <Route path="/subject/:subjectId/*" element={<ModuleView />} />
-                </Routes>
+            <main style={{
+                flex: 1,
+                marginLeft: '260px',
+                padding: '40px',
+                paddingTop: '80px', // Extra padding for the header
+                minHeight: '100vh',
+                position: 'relative'
+            }}>
+                <CareerDataGate>
+                    <TopHeader />
+                    <Suspense fallback={<Loading message="Initializing module..." />}>
+                        <Routes>
+                            <Route path="/" element={<DashboardHome />} />
+                            <Route path="/courses" element={<ErrorBoundary><Courses /></ErrorBoundary>} />
+                            <Route path="/roadmap" element={<ErrorBoundary><Roadmap /></ErrorBoundary>} />
+
+                            {/* Career Exploration Hub (Self-Guided) */}
+                            <Route path="/career" element={<ErrorBoundary><CareerHub /></ErrorBoundary>} />
+                            <Route path="/career/track/:id" element={<ErrorBoundary><TrackDetail /></ErrorBoundary>} />
+
+                            <Route path="/profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
+                            <Route path="/reports" element={<Navigate to="/student/profile?tab=progress" replace />} />
+                            <Route path="/multiplayer" element={<ErrorBoundary><MultiplayerDashboard /></ErrorBoundary>} />
+                            <Route path="/support" element={<ErrorBoundary><SupportPage /></ErrorBoundary>} />
+
+                            {/* Safe Mode Recovery Path */}
+                            <Route path="/safe" element={<SafeMode />} />
+
+                            {/* Learning Content Routes (MUST BE BEFORE FALLBACK) */}
+                            <Route path="/subject/:subjectId/*" element={<ErrorBoundary><ModuleView /></ErrorBoundary>} />
+
+                            {/* Fallback - Only for completely unknown student routes */}
+                            <Route path="*" element={<Navigate to="/student" replace />} />
+                        </Routes>
+                    </Suspense>
+                </CareerDataGate>
             </main>
         </div>
     );
-}
+};
 
 export default StudentDashboard;

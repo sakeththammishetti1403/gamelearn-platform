@@ -45,6 +45,7 @@ const seedData = async () => {
             title: 'Computer Networks',
             description: 'Master the architecture, protocols, and layers of modern networking.',
             image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80',
+            isCore: true,
         });
 
         const cnModule1 = await Module.create({ subjectId: cnSubject._id, title: 'Network Fundamentals', order: 1 });
@@ -88,6 +89,37 @@ const seedData = async () => {
         });
         await Section.create({ moduleId: cnModule1._id, type: 'GAME', order: 5, title: 'Final Challenge: Topologies', gameConfig: cnMemory1._id });
 
+        // CN Module 2
+        const cnModule2 = await Module.create({ subjectId: cnSubject._id, title: 'The OSI Model', order: 2 });
+
+        await Section.create({
+            moduleId: cnModule2._id, type: 'CONTENT', order: 1, title: 'Seven Layers of OSI',
+            contentRef: { text: 'The OSI (Open Systems Interconnection) model conceptalizes how networks communicate. It has 7 layers: Physical, Data Link, Network, Transport, Session, Presentation, and Application.' }
+        });
+
+        await Section.create({
+            moduleId: cnModule2._id, type: 'CONTENT', order: 2, title: 'Upper vs Lower Layers',
+            contentRef: { text: 'Lower layers (Physical, Data Link, Network) deal with data transport. Upper layers (Session, Presentation, Application) deal with application-level data.' }
+        });
+
+        const cnHangman2 = await Game.create({
+            gameType: 'hangman', title: 'OSI Layers', maxScore: 100, passingScore: 100,
+            rules: { word: 'TRANSPORT', maxMistakes: 5 }
+        });
+        await Section.create({ moduleId: cnModule2._id, type: 'GAME', order: 3, title: 'Checkpoint: Layers', gameConfig: cnHangman2._id });
+
+        await Section.create({
+            moduleId: cnModule2._id, type: 'CONTENT', order: 4, title: 'Encapsulation',
+            contentRef: { text: 'As data moves down the layers, headers are added (encapsulation). As it moves up, headers are removed (decapsulation).' }
+        });
+
+        const cnTTT2 = await Game.create({
+            gameType: 'tic-tac-toe', title: 'Encapsulation Logic', maxScore: 100, passingScore: 100,
+            rules: { gridSize: 3, winCondition: 3 }
+        });
+        await Section.create({ moduleId: cnModule2._id, type: 'GAME', order: 5, title: 'Review: Data Flow', gameConfig: cnTTT2._id });
+
+
         // ==========================================
         // SUBJECT 2: Operating Systems
         // ==========================================
@@ -95,6 +127,7 @@ const seedData = async () => {
             title: 'Operating Systems',
             description: 'Explore how software manages hardware and provides a platform for applications.',
             image: 'https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=800&q=80',
+            isCore: true,
         });
 
         const osModule1 = await Module.create({ subjectId: osSubject._id, title: 'Core OS Concepts', order: 1 });
@@ -131,6 +164,43 @@ const seedData = async () => {
         });
         await Section.create({ moduleId: osModule1._id, type: 'GAME', order: 5, title: 'Final Challenge: Processes', gameConfig: osQuiz1._id });
 
+        // OS Module 2
+        const osModule2 = await Module.create({ subjectId: osSubject._id, title: 'Memory Management', order: 2 });
+
+        await Section.create({
+            moduleId: osModule2._id, type: 'CONTENT', order: 1, title: 'RAM and Addressing',
+            contentRef: { text: 'Memory management keeps track of each byte in a computer\'s memory and manages assignment of memory blocks to running processes (allocation and deallocation).' }
+        });
+
+        await Section.create({
+            moduleId: osModule2._id, type: 'CONTENT', order: 2, title: 'Virtual Memory',
+            contentRef: { text: 'Virtual memory creates an illusion of larger main memory by using disk space. This allows programs larger than physical RAM to execute.' }
+        });
+
+        const osMemory2 = await Game.create({
+            gameType: 'memory', title: 'Memory Terms', maxScore: 100, passingScore: 100,
+            rules: {
+                pairs: [
+                    { item1: 'RAM', item2: 'Main Memory' },
+                    { item1: 'Disk', item2: 'Secondary Storage' },
+                    { item1: 'Paging', item2: 'Memory Chunks' }
+                ]
+            }
+        });
+        await Section.create({ moduleId: osModule2._id, type: 'GAME', order: 3, title: 'Checkpoint: Memory', gameConfig: osMemory2._id });
+
+        await Section.create({
+            moduleId: osModule2._id, type: 'CONTENT', order: 4, title: 'Paging and Segmentation',
+            contentRef: { text: 'Paging divides memory into fixed-size blocks (pages), while segmentation divides it into variable-sized segments based on logical units like functions or arrays.' }
+        });
+
+        const osTTT2 = await Game.create({
+            gameType: 'tic-tac-toe', title: 'Management Tactics', maxScore: 100, passingScore: 100,
+            rules: { gridSize: 3, winCondition: 3 }
+        });
+        await Section.create({ moduleId: osModule2._id, type: 'GAME', order: 5, title: 'Review: Optimization', gameConfig: osTTT2._id });
+
+
         // ==========================================
         // SUBJECT 3: Database Systems
         // ==========================================
@@ -138,6 +208,7 @@ const seedData = async () => {
             title: 'Database Systems',
             description: 'Learn to design, implement, and manage relational databases using SQL.',
             image: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=800&q=80',
+            isCore: true,
         });
 
         const dbModule1 = await Module.create({ subjectId: dbSubject._id, title: 'Relational Databases', order: 1 });
@@ -175,6 +246,69 @@ const seedData = async () => {
         });
         await Section.create({ moduleId: dbModule1._id, type: 'GAME', order: 5, title: 'Final Challenge: ACID', gameConfig: dbTTT1._id });
 
+        // DB Module 2
+        const dbModule2 = await Module.create({ subjectId: dbSubject._id, title: 'SQL Fundamentals', order: 2 });
+
+        await Section.create({
+            moduleId: dbModule2._id, type: 'CONTENT', order: 1, title: 'SELECT Statements',
+            contentRef: { text: 'The SELECT statement is used to select data from a database. The data returned is stored in a result table, called the result-set.' }
+        });
+
+        await Section.create({
+            moduleId: dbModule2._id, type: 'CONTENT', order: 2, title: 'Filtering with WHERE',
+            contentRef: { text: 'The WHERE clause extracts only those records that fulfill a specified condition. operators like =, >, <, AND, OR are used.' }
+        });
+
+        const dbQuiz2 = await Game.create({
+            gameType: 'quiz', title: 'SQL Syntax Quiz', maxScore: 100, passingScore: 70,
+            rules: {
+                questions: [
+                    { question: 'Which keyword selects data?', options: ['GET', 'SELECT', 'FETCH', 'OBTAIN'], correctOptionIndex: 1 },
+                    { question: 'Which clause filters data?', options: ['FILTER', 'WHERE', 'WHEN', 'IF'], correctOptionIndex: 1 }
+                ]
+            }
+        });
+        await Section.create({ moduleId: dbModule2._id, type: 'GAME', order: 3, title: 'Checkpoint: Basic SQL', gameConfig: dbQuiz2._id });
+
+        await Section.create({
+            moduleId: dbModule2._id, type: 'CONTENT', order: 4, title: 'Joins',
+            contentRef: { text: 'JOIN clauses are used to combine rows from two or more tables, based on a related column between them. Inner Join, Left Join, Right Join, and Full Join are common types.' }
+        });
+
+        const dbHangman2 = await Game.create({
+            gameType: 'hangman', title: 'SQL Keywords', maxScore: 100, passingScore: 100,
+            rules: { word: 'HAVING', maxMistakes: 5 }
+        });
+        await Section.create({ moduleId: dbModule2._id, type: 'GAME', order: 5, title: 'Review: Advanced SQL', gameConfig: dbHangman2._id });
+
+        // Specialized Modules for DBMS
+        const dbSpecialModule1 = await Module.create({
+            subjectId: dbSubject._id,
+            title: 'Statistics for Data Science',
+            order: 3,
+            isCore: false,
+            careerTags: ['Data Scientist', 'Data Analyst']
+        });
+
+        await Section.create({
+            moduleId: dbSpecialModule1._id, type: 'CONTENT', order: 1, title: 'Statistical Distributions in Data',
+            contentRef: { text: 'In data science, understanding distributions like Normal, Binomial, and Poisson is crucial for analyzing database records. This module explores how to apply statistical tests directly to dataset queries.' }
+        });
+
+        const dbSpecialModule2 = await Module.create({
+            subjectId: dbSubject._id,
+            title: 'Database Scaling & DevOps',
+            order: 4,
+            isCore: false,
+            careerTags: ['Cloud / DevOps Engineer']
+        });
+
+        await Section.create({
+            moduleId: dbSpecialModule2._id, type: 'CONTENT', order: 1, title: 'Sharding and Replication',
+            contentRef: { text: 'For DevOps engineers, managing database reliability at scale is key. Sharding involves partitioning data across multiple servers, while replication ensures high availability.' }
+        });
+
+
         // ==========================================
         // SUBJECT 4: Data Structures & Algorithms
         // ==========================================
@@ -182,6 +316,7 @@ const seedData = async () => {
             title: 'Data Structures & Algorithms',
             description: 'Master the building blocks of efficient software and problem-solving.',
             image: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&w=800&q=80',
+            isCore: true,
         });
 
         const dsaModule1 = await Module.create({ subjectId: dsaSubject._id, title: 'Arrays and Linked Lists', order: 1 });
@@ -218,6 +353,43 @@ const seedData = async () => {
         });
         await Section.create({ moduleId: dsaModule1._id, type: 'GAME', order: 5, title: 'Final Challenge: Lists', gameConfig: dsaQuiz1._id });
 
+        // DSA Module 2
+        const dsaModule2 = await Module.create({ subjectId: dsaSubject._id, title: 'Stacks and Queues', order: 2 });
+
+        await Section.create({
+            moduleId: dsaModule2._id, type: 'CONTENT', order: 1, title: 'The Stack (LIFO)',
+            contentRef: { text: 'A Stack is a linear data structure following LIFO (Last In First Out). Operations are Push (add) and Pop (remove), both happening at the top.' }
+        });
+
+        await Section.create({
+            moduleId: dsaModule2._id, type: 'CONTENT', order: 2, title: 'The Queue (FIFO)',
+            contentRef: { text: 'A Queue follows FIFO (First In First Out). Enqueue adds to the rear, Dequeue removes from the front. Used in printer tasks and CPU scheduling.' }
+        });
+
+        const dsaMemory2 = await Game.create({
+            gameType: 'memory', title: 'Structure Logic Matcher', maxScore: 100, passingScore: 100,
+            rules: {
+                pairs: [
+                    { item1: 'Stack', item2: 'LIFO' },
+                    { item1: 'Queue', item2: 'FIFO' },
+                    { item1: 'Push', item2: 'Add to Top' }
+                ]
+            }
+        });
+        await Section.create({ moduleId: dsaModule2._id, type: 'GAME', order: 3, title: 'Checkpoint: LIFO/FIFO', gameConfig: dsaMemory2._id });
+
+        await Section.create({
+            moduleId: dsaModule2._id, type: 'CONTENT', order: 4, title: 'Applications',
+            contentRef: { text: 'Stacks: undo mechanisms, expression parsing. Queues: buffering, BFS algorithm in graphs.' }
+        });
+
+        const dsaTTT2 = await Game.create({
+            gameType: 'tic-tac-toe', title: 'Data Flow', maxScore: 100, passingScore: 100,
+            rules: { gridSize: 3, winCondition: 3 }
+        });
+        await Section.create({ moduleId: dsaModule2._id, type: 'GAME', order: 5, title: 'Review: Usage', gameConfig: dsaTTT2._id });
+
+
         // ==========================================
         // SUBJECT 5: Object-Oriented Programming
         // ==========================================
@@ -225,6 +397,7 @@ const seedData = async () => {
             title: 'Object-Oriented Programming',
             description: 'Learn the principles of modular and reusable software design.',
             image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
+            isCore: true,
         });
 
         const oopModule1 = await Module.create({ subjectId: oopSubject._id, title: 'OOP Fundamentals', order: 1 });
@@ -267,6 +440,37 @@ const seedData = async () => {
         });
         await Section.create({ moduleId: oopModule1._id, type: 'GAME', order: 5, title: 'Final Challenge: Principles', gameConfig: oopQuiz1._id });
 
+        // OOP Module 2
+        const oopModule2 = await Module.create({ subjectId: oopSubject._id, title: 'Advanced OOP', order: 2 });
+
+        await Section.create({
+            moduleId: oopModule2._id, type: 'CONTENT', order: 1, title: 'Abstraction',
+            contentRef: { text: 'Abstraction hides complex implementation details and shows only the necessary features of an object. Think of a car dashboard: you use the steering wheel without knowing how the engine works.' }
+        });
+
+        await Section.create({
+            moduleId: oopModule2._id, type: 'CONTENT', order: 2, title: 'Interfaces vs Abstract Classes',
+            contentRef: { text: 'An Abstract Class can have implementation, while an Interface is purely a contract. A class can implement multiple interfaces but inherit only one class.' }
+        });
+
+        const oopHangman2 = await Game.create({
+            gameType: 'hangman', title: 'OOP Mastery', maxScore: 100, passingScore: 100,
+            rules: { word: 'ABSTRACT', maxMistakes: 5 }
+        });
+        await Section.create({ moduleId: oopModule2._id, type: 'GAME', order: 3, title: 'Checkpoint: Abstraction', gameConfig: oopHangman2._id });
+
+        await Section.create({
+            moduleId: oopModule2._id, type: 'CONTENT', order: 4, title: 'Composition vs Inheritance',
+            contentRef: { text: 'Composition ("has-a" relationship) is often preferred over Inheritance ("is-a" relationship) for flexibility. Classes are built by combining objects of other classes.' }
+        });
+
+        const oopTTT2 = await Game.create({
+            gameType: 'tic-tac-toe', title: 'Design Patterns', maxScore: 100, passingScore: 100,
+            rules: { gridSize: 3, winCondition: 3 }
+        });
+        await Section.create({ moduleId: oopModule2._id, type: 'GAME', order: 5, title: 'Review: Design', gameConfig: oopTTT2._id });
+
+
         // ==========================================
         // SUBJECT 6: Software Engineering
         // ==========================================
@@ -304,6 +508,48 @@ const seedData = async () => {
             rules: { gridSize: 3, winCondition: 3 }
         });
         await Section.create({ moduleId: seModule1._id, type: 'GAME', order: 5, title: 'Final Challenge: Testing', gameConfig: seTTT1._id });
+
+        // SE Module 2
+        const seModule2 = await Module.create({ subjectId: seSubject._id, title: 'Agile & DevOps', order: 2 });
+
+        await Section.create({
+            moduleId: seModule2._id, type: 'CONTENT', order: 1, title: 'Scrum Framework',
+            contentRef: { text: 'Scrum is a popular Agile framework. It uses "Sprints" (cycles of work), "Scrum Master" (facilitator), and "Product Backlog" (todo list) to manage complex projects.' }
+        });
+
+        await Section.create({
+            moduleId: seModule2._id, type: 'CONTENT', order: 2, title: 'DevOps Culture',
+            contentRef: { text: 'DevOps unifies software development (Dev) and software operation (Ops). It shortens the systems development life cycle and provides continuous delivery with high software quality.' }
+        });
+
+        const seQuiz2 = await Game.create({
+            gameType: 'quiz', title: 'Modern SE Quiz', maxScore: 100, passingScore: 70,
+            rules: {
+                questions: [
+                    { question: 'Which is a role in Scrum?', options: ['Project Manager', 'Scrum Master', 'Boss', 'Admin'], correctOptionIndex: 1 },
+                    { question: 'What does DevOps combine?', options: ['Dev & Test', 'Dev & Ops', 'Ops & Sales', 'Dev & HR'], correctOptionIndex: 1 }
+                ]
+            }
+        });
+        await Section.create({ moduleId: seModule2._id, type: 'GAME', order: 3, title: 'Checkpoint: Modern SE', gameConfig: seQuiz2._id });
+
+        await Section.create({
+            moduleId: seModule2._id, type: 'CONTENT', order: 4, title: 'CI/CD Pipelines',
+            contentRef: { text: 'Continuous Integration (CI) and Continuous Delivery (CD) automate the software release process. Code changes are automatically built, tested, and prepared for release to production.' }
+        });
+
+        const seMemory2 = await Game.create({
+            gameType: 'memory', title: 'Pipeline Matcher', maxScore: 100, passingScore: 100,
+            rules: {
+                pairs: [
+                    { item1: 'CI', item2: 'Continuous Integration' },
+                    { item1: 'CD', item2: 'Continuous Delivery' },
+                    { item1: 'Sprint', item2: 'Scrum Cycle' }
+                ]
+            }
+        });
+        await Section.create({ moduleId: seModule2._id, type: 'GAME', order: 5, title: 'Review: Automation', gameConfig: seMemory2._id });
+
 
         // ==========================================
         // SUBJECT 7: Computer Organization
@@ -354,6 +600,37 @@ const seedData = async () => {
         });
         await Section.create({ moduleId: coModule1._id, type: 'GAME', order: 5, title: 'Final Challenge: Architecture', gameConfig: coQuiz1._id });
 
+        // CO Module 2
+        const coModule2 = await Module.create({ subjectId: coSubject._id, title: 'Digital Logic', order: 2 });
+
+        await Section.create({
+            moduleId: coModule2._id, type: 'CONTENT', order: 1, title: 'Boolean Algebra',
+            contentRef: { text: 'Boolean algebra deals with binary variables and logic operations usually used in designing digital circuits. Operations include AND, OR, NOT.' }
+        });
+
+        await Section.create({
+            moduleId: coModule2._id, type: 'CONTENT', order: 2, title: 'Logic Gates',
+            contentRef: { text: 'Logic gates are the building blocks of digital computers. NAND and NOR gates are "universal gates" because any other gate can be implemented using them.' }
+        });
+
+        const coHangman2 = await Game.create({
+            gameType: 'hangman', title: 'Logic Gates', maxScore: 100, passingScore: 100,
+            rules: { word: 'BOOLEAN', maxMistakes: 5 }
+        });
+        await Section.create({ moduleId: coModule2._id, type: 'GAME', order: 3, title: 'Checkpoint: Logic', gameConfig: coHangman2._id });
+
+        await Section.create({
+            moduleId: coModule2._id, type: 'CONTENT', order: 4, title: 'Sequential vs Combinational',
+            contentRef: { text: 'Combinational circuits output depends ONLY on present input (e.g., Adder). Sequential circuits output depends on present input AND past history (e.g., Flip-Flop used for memory).' }
+        });
+
+        const coTTT2 = await Game.create({
+            gameType: 'tic-tac-toe', title: 'Circuit Design', maxScore: 100, passingScore: 100,
+            rules: { gridSize: 3, winCondition: 3 }
+        });
+        await Section.create({ moduleId: coModule2._id, type: 'GAME', order: 5, title: 'Review: Circuits', gameConfig: coTTT2._id });
+
+
         // ==========================================
         // SUBJECT 8: Compiler Design
         // ==========================================
@@ -396,6 +673,43 @@ const seedData = async () => {
             }
         });
         await Section.create({ moduleId: cdModule1._id, type: 'GAME', order: 5, title: 'Final Challenge: Compilation', gameConfig: cdQuiz1._id });
+
+        // CD Module 2
+        const cdModule2 = await Module.create({ subjectId: cdSubject._id, title: 'Optimization & Code Gen', order: 2 });
+
+        await Section.create({
+            moduleId: cdModule2._id, type: 'CONTENT', order: 1, title: 'Semantic Analysis',
+            contentRef: { text: 'Semantic analysis ensures that declarations and statements of a program are semantically correct. It checks for type compatibility (e.g., adding a string to an integer).' }
+        });
+
+        await Section.create({
+            moduleId: cdModule2._id, type: 'CONTENT', order: 2, title: 'Code Optimization',
+            contentRef: { text: 'Optimization improves the intermediate code to make the machine code faster and consume fewer resources, without changing the meaning of the program.' }
+        });
+
+        const cdMemory2 = await Game.create({
+            gameType: 'memory', title: 'Compiler Phase Matcher', maxScore: 100, passingScore: 100,
+            rules: {
+                pairs: [
+                    { item1: 'Semantic', item2: 'Type Checking' },
+                    { item1: 'Lexer', item2: 'Tokenizer' },
+                    { item1: 'Optimizer', item2: 'Performance' }
+                ]
+            }
+        });
+        await Section.create({ moduleId: cdModule2._id, type: 'GAME', order: 3, title: 'Checkpoint: Phases', gameConfig: cdMemory2._id });
+
+        await Section.create({
+            moduleId: cdModule2._id, type: 'CONTENT', order: 4, title: 'Code Generation',
+            contentRef: { text: 'The final phase where the compiler generates the target machine code or assembly code. It involves register allocation and instruction selection.' }
+        });
+
+        const cdTTT2 = await Game.create({
+            gameType: 'tic-tac-toe', title: 'CodeGen Logic', maxScore: 100, passingScore: 100,
+            rules: { gridSize: 3, winCondition: 3 }
+        });
+        await Section.create({ moduleId: cdModule2._id, type: 'GAME', order: 5, title: 'Review: Final Step', gameConfig: cdTTT2._id });
+
 
         console.log('Data imported!');
         process.exit();

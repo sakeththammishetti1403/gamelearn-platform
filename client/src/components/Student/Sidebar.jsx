@@ -14,19 +14,19 @@ function Sidebar() {
     };
 
     const navLinkStyle = ({ isActive }) => ({
-        padding: '14px 20px',
-        borderRadius: '16px',
+        padding: '12px 16px',
+        borderRadius: 'var(--radius-md)',
         textDecoration: 'none',
-        color: isActive ? '#4F7DF3' : '#7A859E',
-        backgroundColor: isActive ? '#EEF2FF' : 'transparent',
+        color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
+        backgroundColor: isActive ? 'var(--primary-light)' : 'transparent',
         display: 'flex',
         alignItems: 'center',
-        gap: '14px',
-        fontSize: '15px',
-        fontWeight: isActive ? '700' : '500',
-        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        marginBottom: '8px',
-        border: isActive ? '1px solid #D1DBFF' : '1px solid transparent'
+        gap: '12px',
+        fontSize: '14px',
+        fontWeight: isActive ? '600' : '500',
+        transition: 'var(--transition)',
+        marginBottom: '6px',
+        borderLeft: isActive ? '3px solid var(--primary)' : '3px solid transparent'
     });
 
     const isStudent = user?.role === 'student';
@@ -35,59 +35,71 @@ function Sidebar() {
 
     return (
         <div className="sidebar" style={{
-            width: '280px',
+            width: '260px',
             height: '100vh',
-            backgroundColor: '#FFFFFF',
-            borderRight: '1px solid #E5E9F2',
+            backgroundColor: 'var(--bg-sidebar)',
+            borderRight: '1px solid var(--border-color)',
             position: 'fixed',
             left: 0,
             top: 0,
             display: 'flex',
             flexDirection: 'column',
-            padding: '40px 24px',
+            padding: '32px 20px',
             zIndex: 1000,
-            boxShadow: '4px 0 24px rgba(46, 58, 89, 0.02)'
+            boxShadow: 'var(--shadow-sm)'
         }}>
             <div className="logo" style={{
-                fontSize: '24px',
-                fontWeight: '800',
-                color: '#2E3A59',
-                marginBottom: '56px',
+                fontSize: '20px',
+                fontWeight: '700',
+                color: 'var(--text-main)',
+                marginBottom: '48px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '14px',
-                paddingLeft: '8px',
-                letterSpacing: '-0.5px'
+                gap: '12px',
+                paddingLeft: '4px'
             }}>
                 <div style={{
-                    width: '40px',
-                    height: '40px',
-                    backgroundColor: '#4F7DF3',
-                    borderRadius: '12px',
+                    width: '32px',
+                    height: '32px',
+                    backgroundColor: 'var(--primary)',
+                    borderRadius: '8px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'white',
-                    fontSize: '20px',
-                    boxShadow: '0 4px 12px rgba(79, 125, 243, 0.3)'
+                    fontSize: '16px',
+                    boxShadow: '0 4px 10px rgba(51, 84, 149, 0.25)'
                 }}>G</div>
                 GameLearn
             </div>
 
             <nav style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <p style={{
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    color: 'var(--text-tertiary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: '16px',
+                    paddingLeft: '16px'
+                }}>Menu</p>
+
                 {isStudent && (
                     <>
                         <NavLink to="/student" end style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>🏠</span> Dashboard
+                            <span>🏠</span> Dashboard
                         </NavLink>
                         <NavLink to="/student/courses" style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>📚</span> My Courses
+                            <span>📚</span> My Courses
                         </NavLink>
-                        <NavLink to="/student/progress" style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>📈</span> Progress
+                        <NavLink to="/student/roadmap" style={navLinkStyle}>
+                            <span>🚀</span> Roadmap
                         </NavLink>
-                        <NavLink to="/student/reports" style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>📋</span> Reports
+                        <NavLink to="/student/career" style={navLinkStyle}>
+                            <span>🎓</span> Career Exploration
+                        </NavLink>
+                        <NavLink to="/student/multiplayer" style={navLinkStyle}>
+                            <span>⚔️</span> Multiplayer Arena
                         </NavLink>
                     </>
                 )}
@@ -95,10 +107,10 @@ function Sidebar() {
                 {isInstructor && (
                     <>
                         <NavLink to="/instructor" end style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>👨‍🏫</span> Instructor Panel
+                            <span>👨‍🏫</span> Panel
                         </NavLink>
                         <NavLink to="/instructor/subjects" style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>📖</span> Manage Content
+                            <span>📖</span> Content
                         </NavLink>
                     </>
                 )}
@@ -106,13 +118,13 @@ function Sidebar() {
                 {isAdmin && (
                     <>
                         <NavLink to="/admin" end style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>🛡️</span> Admin Panel
+                            <span>🛡️</span> Admin
                         </NavLink>
                         <NavLink to="/admin/users" style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>👥</span> User Management
+                            <span>👥</span> Users
                         </NavLink>
                         <NavLink to="/admin/stats" style={navLinkStyle}>
-                            <span style={{ fontSize: '20px' }}>📊</span> System Stats
+                            <span>📈</span> Stats
                         </NavLink>
                     </>
                 )}
@@ -120,55 +132,54 @@ function Sidebar() {
 
             <div style={{
                 marginTop: 'auto',
-                padding: '24px',
-                backgroundColor: '#F6F8FC',
-                borderRadius: '20px',
-                marginBottom: '24px'
+                padding: '20px',
+                backgroundColor: 'var(--bg-app)',
+                borderRadius: 'var(--radius-md)',
+                marginBottom: '20px',
+                border: '1px solid var(--border-color)'
             }}>
-                <p style={{ fontSize: '13px', fontWeight: '600', color: '#2E3A59', marginBottom: '4px' }}>Need help?</p>
-                <p style={{ fontSize: '12px', color: '#7A859E', marginBottom: '12px' }}>Check our documentation</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>🎓</span>
+                    <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-main)', margin: 0 }}>Need assistance?</p>
+                </div>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: '1.4' }}>Access guides or contact support.</p>
                 <button
                     onClick={() => setShowSupport(true)}
+                    className="btn btn-secondary"
                     style={{
                         width: '100%',
                         padding: '8px',
-                        borderRadius: '8px',
-                        border: '1px solid #E5E9F2',
-                        backgroundColor: 'white',
                         fontSize: '12px',
-                        fontWeight: '600',
-                        color: '#2E3A59',
-                        cursor: 'pointer'
                     }}
-                >Support →</button>
+                >Open Support</button>
             </div>
 
             <button
                 onClick={handleLogout}
                 style={{
-                    padding: '14px 20px',
-                    borderRadius: '16px',
+                    padding: '12px 16px',
+                    borderRadius: 'var(--radius-md)',
                     border: 'none',
                     backgroundColor: 'transparent',
-                    color: '#7A859E',
+                    color: 'var(--text-secondary)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '14px',
-                    fontWeight: '600',
-                    fontSize: '15px',
-                    transition: 'all 0.2s ease'
+                    gap: '12px',
+                    fontWeight: '500',
+                    fontSize: '14px',
+                    transition: 'var(--transition)'
                 }}
                 onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#FFF1F2';
-                    e.currentTarget.style.color = '#F43F5E';
+                    e.currentTarget.style.color = 'var(--text-main)';
+                    e.currentTarget.style.backgroundColor = 'var(--bg-app)';
                 }}
                 onMouseOut={(e) => {
+                    e.currentTarget.style.color = 'var(--text-secondary)';
                     e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#7A859E';
                 }}
             >
-                <span style={{ fontSize: '20px' }}>🚪</span> Logout
+                <span>🚪</span> Sign Out
             </button>
             <SupportModal isOpen={showSupport} onClose={() => setShowSupport(false)} />
         </div>

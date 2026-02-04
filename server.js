@@ -2,45 +2,98 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const http = require('http');
+const { Server } = require('socket.io');
 
+// 1. Load Env
 dotenv.config();
 
+// 2. Validate Environment Variables
+const validateEnv = require('./utils/validateEnv');
+validateEnv();
+
+// 2. Setup Express & HTTP Server
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// 3. Global Middleware
 app.use(cors({
     origin: [
         'http://localhost:3000',
+        'http://localhost:5173',
         'https://gamelearn-platform-seven.vercel.app'
     ],
     credentials: true
 }));
-
 app.use(express.json());
 
-// MongoDB connection
+// Initialize Passport
+const passport = require('passport');
+app.use(passport.initialize());
+require('./config/passport')(passport);
+
+// 4. Database Connection
 mongoose
     .connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("MongoDB connected");
-    })
+    .then(() => console.log("✅ MongoDB connected successfully"))
     .catch((err) => {
-        console.error("MongoDB connection error:", err);
+        console.error("❌ MongoDB connection error:", err);
         process.exit(1);
     });
 
-// Routes
+// 5. Attach Socket.IO to SAME server
+const io = new Server(server, {
+    cors: {
+        origin: [
+            'http://localhost:3000',
+            'http://localhost:5173',
+            'https://gamelearn-platform-seven.vercel.app'
+        ],
+        credentials: true
+    }
+});
+
+// 6. Multiplayer Arena Logic (Delegated for Production-Grade Gameplay)
+const socketHandler = require('./socket/gameHandler');
+socketHandler(io);
+
+// 7. Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/career', require('./routes/career'));
 app.use('/api/learning', require('./routes/learning'));
+
+// Auto-seed Career Tracks
+const seedCareerTracks = require('./seedCareer');
+mongoose.connection.once('open', () => {
+    seedCareerTracks();
+});
+
 app.use('/api/game', require('./routes/game'));
 app.use('/api/instructor', require('./routes/instructor'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/support', require('./routes/support'));
+app.use('/api/leaderboard', require('./routes/leaderboard'));
+app.use('/api/reward', require('./routes/reward'));
 
-app.get('/', (req, res) => {
-    res.send('Game-Based Learning Platform API is running');
+// 8. Base Routes
+app.get('/', (req, res) => res.send('GameLearn Production Server (REST + Real-time) is running'));
+app.get('/health', (req, res) => res.status(200).json({
+    status: 'active',
+    services: ['api', 'sockets'],
+    timestamp: new Date()
+}));
+
+// 9. Start Unified Server with Port Collision Handling
+server.listen(PORT, () => {
+    console.log(`🚀 Unified Server + Multiplayer Arena running on port ${PORT}`);
+}).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`❌ FATAL ERROR: Port ${PORT} is already in use.`);
+        console.error(`💡 SOLUTION: Check for duplicate processes or run 'npm run kill-server' (if available).`);
+    } else {
+        console.error("❌ server failed to start:", err);
+    }
+    process.exit(1);
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});

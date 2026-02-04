@@ -82,7 +82,7 @@ function ModuleList({ subjectId }) {
                             e.currentTarget.style.transform = 'translateX(0)';
                         }}
                     >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flex: 1 }}>
                             <div style={{
                                 width: '48px',
                                 height: '48px',
@@ -97,7 +97,23 @@ function ModuleList({ subjectId }) {
                             }}>
                                 {module.order}
                             </div>
-                            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#2E3A59' }}>{module.title}</h3>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
+                                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#2E3A59', margin: 0 }}>
+                                        {module.title}
+                                    </h3>
+                                    {module.isCore ? (
+                                        <span style={{ fontSize: '10px', fontWeight: '800', backgroundColor: '#EEF2FF', color: '#4F7DF3', padding: '2px 8px', borderRadius: '6px' }}>CORE</span>
+                                    ) : (
+                                        <span style={{ fontSize: '10px', fontWeight: '800', backgroundColor: '#ECFDF5', color: '#10B981', padding: '2px 8px', borderRadius: '6px' }}>ADVANCED</span>
+                                    )}
+                                </div>
+                                {!module.isCore && (
+                                    <p style={{ margin: 0, fontSize: '13px', color: '#7A859E', fontWeight: '500' }}>
+                                        Recommended specialization for {module.careerTags?.join(', ') || 'related roles'}.
+                                    </p>
+                                )}
+                            </div>
                         </div>
                         <div style={{ color: '#4F7DF3', fontSize: '20px' }}>→</div>
                     </div>
@@ -178,7 +194,6 @@ function SectionList() {
             <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#2E3A59', marginBottom: '24px' }}>Sections</h2>
             <div style={{ display: 'grid', gap: '16px' }}>
                 {sections.map((section) => {
-                    const isLocked = section.userStatus === 'LOCKED';
                     const isCompleted = section.userStatus === 'COMPLETED';
 
                     return (
@@ -186,9 +201,8 @@ function SectionList() {
                             key={section._id}
                             className="card"
                             style={{
-                                cursor: isLocked ? 'default' : 'pointer',
+                                cursor: 'pointer',
                                 padding: '24px',
-                                opacity: isLocked ? 0.6 : 1,
                                 backgroundColor: isCompleted ? '#F0FDF4' : '#FFFFFF',
                                 borderColor: isCompleted ? '#DCFCE7' : '#E5E9F2',
                                 borderRadius: '20px',
@@ -197,33 +211,29 @@ function SectionList() {
                                 gap: '20px',
                                 transition: 'all 0.2s ease'
                             }}
-                            onClick={() => !isLocked && navigate(`/student/subject/${subjectId}/module/${moduleId}/section/${section._id}`)}
+                            onClick={() => navigate(`/student/subject/${subjectId}/module/${moduleId}/section/${section._id}`)}
                             onMouseOver={(e) => {
-                                if (!isLocked) {
-                                    e.currentTarget.style.borderColor = isCompleted ? '#4CAF50' : '#4F7DF3';
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                }
+                                e.currentTarget.style.borderColor = isCompleted ? '#4CAF50' : '#4F7DF3';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
                             }}
                             onMouseOut={(e) => {
-                                if (!isLocked) {
-                                    e.currentTarget.style.borderColor = isCompleted ? '#DCFCE7' : '#E5E9F2';
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                }
+                                e.currentTarget.style.borderColor = isCompleted ? '#DCFCE7' : '#E5E9F2';
+                                e.currentTarget.style.transform = 'translateY(0)';
                             }}
                         >
                             <div style={{
                                 width: '40px',
                                 height: '40px',
                                 borderRadius: '10px',
-                                backgroundColor: isCompleted ? '#4CAF50' : isLocked ? '#F6F8FC' : '#EEF2FF',
-                                color: isCompleted ? 'white' : isLocked ? '#7A859E' : '#4F7DF3',
+                                backgroundColor: isCompleted ? '#4CAF50' : '#EEF2FF',
+                                color: isCompleted ? 'white' : '#4F7DF3',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 fontSize: '16px',
                                 fontWeight: '700'
                             }}>
-                                {isCompleted ? '✓' : isLocked ? '🔒' : section.order}
+                                {isCompleted ? '✓' : section.order}
                             </div>
                             <div style={{ flex: 1 }}>
                                 <h3 style={{ fontSize: '17px', fontWeight: '600', color: '#2E3A59', marginBottom: '4px' }}>{section.title}</h3>
@@ -241,7 +251,7 @@ function SectionList() {
                                     )}
                                 </div>
                             </div>
-                            {!isLocked && <div style={{ color: isCompleted ? '#4CAF50' : '#4F7DF3', fontSize: '18px' }}>→</div>}
+                            <div style={{ color: isCompleted ? '#4CAF50' : '#4F7DF3', fontSize: '18px' }}>→</div>
                         </div>
                     );
                 })}

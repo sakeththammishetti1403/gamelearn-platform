@@ -62,7 +62,7 @@ function SectionView() {
                 navigate(`/student/subject/${subjectId}/module/${moduleId}`);
             }
         } else {
-            throw new Error(result.feedback);
+            setError(result.feedback);
         }
     };
 

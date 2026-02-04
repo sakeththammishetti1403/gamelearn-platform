@@ -4,11 +4,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "npm run dev --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "seed": "node seeder.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node server.js",
+    "seed": "node seeder.js"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +17,15 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.1.5"
+    "mongoose": "^9.1.5",
+    "nodemailer": "^7.0.13",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-linkedin-oauth2": "^2.0.0",
+    "pdfkit": "^0.17.2",
+    "socket.io": "^4.8.3",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
