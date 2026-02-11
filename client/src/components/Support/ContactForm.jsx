@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../services/api';
 
 const ContactForm = ({ onBack, initialSubject = 'General Inquiry', initialMessage = '' }) => {
     const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ const ContactForm = ({ onBack, initialSubject = 'General Inquiry', initialMessag
         e.preventDefault();
         setStatus('sending');
         try {
-            await axios.post('http://localhost:5000/api/support/email', formData);
+            await axios.post(`${API_URL}/support/email`, formData);
             setStatus('success');
         } catch (err) {
             console.error(err);

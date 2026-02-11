@@ -1,11 +1,12 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
+import { API_URL } from '../services/api';
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        // Minimal fallback to prevent destructuring crashes
         return {
             isAuthenticated: false,
             user: null,
@@ -23,21 +24,39 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        try {
-            const storedToken = localStorage.getItem('token');
-            const storedUser = localStorage.getItem('user');
+        const initAuth = async () => {
+            try {
+                const storedToken = localStorage.getItem('token');
+                const storedUser = localStorage.getItem('user');
 
-            if (storedToken && storedUser && storedUser !== 'undefined') {
-                setToken(storedToken);
-                setUser(JSON.parse(storedUser));
+                if (storedToken && storedUser && storedUser !== 'undefined') {
+                    // Pre-emptively set state for better UX
+                    setToken(storedToken);
+                    setUser(JSON.parse(storedUser));
+
+                    // Verify token with backend
+                    try {
+                        const response = await axios.get(`${API_URL}/auth/me`, {
+                            headers: { Authorization: `Bearer ${storedToken}` }
+                        });
+                        setUser(response.data);
+                        localStorage.setItem('user', JSON.stringify(response.data));
+                    } catch (err) {
+                        console.error('Token verification failed:', err);
+                        if (err.response?.status === 401) {
+                            logout();
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Auth initialization failed:', err);
+                logout();
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            console.error('Auth initialization failed:', err);
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-        } finally {
-            setLoading(false);
-        }
+        };
+
+        initAuth();
     }, []);
 
     const loginUser = (userData, userToken) => {

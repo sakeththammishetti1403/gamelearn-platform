@@ -37,8 +37,8 @@ function Progress() {
 
         data.forEach(subject => {
             subject.modules.forEach(module => {
-                completed += module.completedSections || 0;
-                available += module.unlockedSections || 0;
+                completed += module.completedSectionsCount || 0;
+                available += module.unlockedSectionsCount || 0;
                 total += module.totalSections || 0;
             });
         });
@@ -129,9 +129,7 @@ function Progress() {
                                             <div style={{ width: `${module.progress}%`, height: '100%', backgroundColor: module.progress === 100 ? 'var(--status-success)' : 'var(--primary)' }} />
                                         </div>
                                         <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                                            <div style={{ marginBottom: '4px' }}>
-                                                Sections: <strong style={{ color: 'var(--text-main)' }}>{module.completedSections} / {module.totalSections}</strong>
-                                            </div>
+                                            Sections: <strong style={{ color: 'var(--text-main)' }}>{module.completedSectionsCount} / {module.totalSections}</strong>
                                             {module.lastSection && (
                                                 <div style={{ color: 'var(--text-tertiary)', fontStyle: 'italic', fontSize: '11px' }}>
                                                     Last: {module.lastSection}

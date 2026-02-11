@@ -1,0 +1,180 @@
+{
+  "timestamp": "2026-02-11T14:17:31.621Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/auth/me",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:31.648Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/auth/me",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:31.691Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/stats",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:31.702Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:31.711Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/stats",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:31.719Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:35.060Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/stats",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:35.073Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:36.251Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:36.262Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:38.800Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:38.814Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:42.477Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:42.486Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:43.994Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/stats",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:44.004Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:44.011Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/stats",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:44.020Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:46.838Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/stats",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-11T14:17:46.847Z",
+  "message": "invalid signature",
+  "stack": "JsonWebTokenError: invalid signature\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:171:19\n    at getSecret (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:97:14)\n    at module.exports [as verify] (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\jsonwebtoken\\verify.js:101:10)\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\middleware\\authMiddleware.js:13:29\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\utils\\catchAsync.js:7:9\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\router\\lib\\layer.js:152:17)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---

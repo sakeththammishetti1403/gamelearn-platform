@@ -3,12 +3,20 @@ const router = express.Router();
 const Progress = require('../models/Progress');
 const User = require('../models/User');
 const { protect } = require('../middleware/authMiddleware');
+const cacheService = require('../services/cacheService');
 
 // @desc    Get global leaderboard
 // @route   GET /api/leaderboard/global
 // @access  Private (Students can view)
 router.get('/global', protect, async (req, res) => {
     try {
+        const cacheKey = 'leaderboard:global';
+        const cacheddata = await cacheService.get(cacheKey);
+
+        if (cacheddata) {
+            return res.json(cacheddata);
+        }
+
         const leaderboard = await Progress.aggregate([
             {
                 $group: {
@@ -54,6 +62,9 @@ router.get('/global', protect, async (req, res) => {
             modulesCompleted: entry.modulesCompleted
         }));
 
+        // Cache for 5 minutes
+        await cacheService.set(cacheKey, rankedLeaderboard, 300);
+
         res.json(rankedLeaderboard);
     } catch (err) {
         console.error(err);
@@ -67,6 +78,13 @@ router.get('/global', protect, async (req, res) => {
 router.get('/subject/:subjectId', protect, async (req, res) => {
     try {
         const { subjectId } = req.params;
+        const cacheKey = `leaderboard:subject:${subjectId}`;
+        const cachedData = await cacheService.get(cacheKey);
+
+        if (cachedData) {
+            return res.json(cachedData);
+        }
+
         const mongoose = require('mongoose');
 
         const leaderboard = await Progress.aggregate([
@@ -108,6 +126,9 @@ router.get('/subject/:subjectId', protect, async (req, res) => {
             xp: entry.totalScore * 10
         }));
 
+        // Cache for 5 minutes
+        await cacheService.set(cacheKey, rankedLeaderboard, 300);
+
         res.json(rankedLeaderboard);
     } catch (err) {
         console.error(err);
@@ -120,6 +141,13 @@ router.get('/subject/:subjectId', protect, async (req, res) => {
 // @access  Private
 router.get('/weekly', protect, async (req, res) => {
     try {
+        const cacheKey = 'leaderboard:weekly';
+        const cachedData = await cacheService.get(cacheKey);
+
+        if (cachedData) {
+            return res.json(cachedData);
+        }
+
         const lastWeek = new Date();
         lastWeek.setDate(lastWeek.getDate() - 7);
 
@@ -159,6 +187,9 @@ router.get('/weekly', protect, async (req, res) => {
             score: entry.weeklyScore,
             xp: entry.weeklyScore * 10
         }));
+
+        // Cache for 5 minutes
+        await cacheService.set(cacheKey, rankedLeaderboard, 300);
 
         res.json(rankedLeaderboard);
     } catch (err) {

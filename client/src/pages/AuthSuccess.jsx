@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../services/api';
 import axios from 'axios';
 
 function AuthSuccess() {
@@ -24,7 +25,7 @@ function AuthSuccess() {
 
             try {
                 // Fetch user data with token
-                const response = await axios.get('http://localhost:5000/api/auth/me', {
+                const response = await axios.get(`${API_URL}/auth/me`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -38,13 +39,13 @@ function AuthSuccess() {
 
                 // Redirect based on role
                 if (userData.role === 'student') {
-                    navigate('/student/dashboard');
+                    navigate('/student');
                 } else if (userData.role === 'instructor') {
                     navigate('/instructor');
                 } else if (userData.role === 'admin') {
                     navigate('/admin');
                 } else {
-                    navigate('/student/dashboard');
+                    navigate('/student');
                 }
             } catch (error) {
                 console.error('❌ [AUTH] Failed to fetch user data:', error);

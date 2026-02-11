@@ -5,167 +5,143 @@ const Subject = require('../models/Subject');
 const Module = require('../models/Module');
 const Section = require('../models/Section');
 const Progress = require('../models/Progress');
-const Game = require('../models/Game');
 const CareerTrack = require('../models/CareerTrack');
 const { checkModuleCompletion } = require('../services/completionService');
+const catchAsync = require('../utils/catchAsync');
+const cacheService = require('../services/cacheService');
 
 // @desc    Get all subjects
 // @route   GET /api/learning/subjects
 // @access  Private
-router.get('/subjects', protect, async (req, res) => {
-    try {
-        const subjects = await Subject.find({ isActive: true });
-        res.json(subjects);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+router.get('/subjects', protect, catchAsync(async (req, res) => {
+    const cacheKey = 'learning:subjects';
+    const cachedData = await cacheService.get(cacheKey);
+    if (cachedData) return res.json(cachedData);
+
+    const subjects = await Subject.find({ isActive: true });
+    await cacheService.set(cacheKey, subjects, 3600); // 1 hour
+    res.json(subjects);
+}));
 
 // @desc    Get modules for a subject
 // @route   GET /api/learning/modules/:subjectId
 // @access  Private
-router.get('/modules/:subjectId', protect, async (req, res) => {
-    try {
-        const modules = await Module.find({
-            subjectId: req.params.subjectId,
-            isActive: true
-        }).sort({ order: 1 });
+router.get('/modules/:subjectId', protect, catchAsync(async (req, res) => {
+    const { subjectId } = req.params;
+    const cacheKey = `learning:modules:${subjectId}`;
+    const cachedData = await cacheService.get(cacheKey);
+    if (cachedData) return res.json(cachedData);
 
-        // Get user's active career track
-        let userCareer = null;
-        if (req.user.activeCareerTrack) {
-            userCareer = await CareerTrack.findById(req.user.activeCareerTrack);
-        }
+    const modules = await Module.find({
+        subjectId: req.params.subjectId,
+        isActive: true
+    }).sort({ order: 1 });
 
-        const modulesWithGating = modules.map(module => {
-            return {
-                ...module.toObject(),
-                isLocked: false,
-                lockReason: ''
-            };
-        });
+    const modulesWithGating = modules.map(m => ({
+        ...m.toObject(),
+        isLocked: false,
+        lockReason: ''
+    }));
 
-        res.json(modulesWithGating);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+    await cacheService.set(cacheKey, modulesWithGating, 3600); // 1 hour
+    res.json(modulesWithGating);
+}));
 
 // @desc    Get sections for a module with user progress
 // @route   GET /api/learning/sections/:moduleId
 // @access  Private
-router.get('/sections/:moduleId', protect, async (req, res) => {
-    try {
-        const module = await Module.findById(req.params.moduleId);
-        if (!module) return res.status(404).json({ message: 'Module not found' });
+router.get('/sections/:moduleId', protect, catchAsync(async (req, res) => {
+    const module = await Module.findById(req.params.moduleId);
+    if (!module) return res.status(404).json({ message: 'Module not found' });
 
-        // All modules are now accessible regardless of career track
-        const sections = await Section.find({ moduleId: req.params.moduleId })
-            .sort({ order: 1 })
-            .populate('gameConfig');
+    const sections = await Section.find({ moduleId: req.params.moduleId })
+        .sort({ order: 1 })
+        .populate('gameConfig');
 
-        // Fetch user progress for these sections
-        const progress = await Progress.find({
-            userId: req.user._id,
-            moduleId: req.params.moduleId,
-        });
+    const progress = await Progress.find({
+        userId: req.user._id,
+        moduleId: req.params.moduleId,
+    });
 
-        // All sections are now accessible
-        const sectionsWithProgress = sections.map(section => {
-            const userProgress = progress.find(p => p.sectionId.toString() === section._id.toString());
-            return {
-                ...section.toObject(),
-                userStatus: userProgress ? userProgress.status : 'UNLOCKED',
-                userScore: userProgress ? userProgress.score : 0,
-            };
-        });
+    const sectionsWithProgress = sections.map(section => {
+        const userProgress = progress.find(p => p.sectionId.toString() === section._id.toString());
+        return {
+            ...section.toObject(),
+            userStatus: userProgress ? userProgress.status : 'UNLOCKED',
+            userScore: userProgress ? userProgress.score : 0,
+        };
+    });
 
-        res.json(sectionsWithProgress);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+    res.json(sectionsWithProgress);
+}));
 
 // @desc    Mark content section as completed
 // @route   POST /api/learning/section/:sectionId/complete
 // @access  Private
-router.post('/section/:sectionId/complete', protect, async (req, res) => {
-    try {
-        const section = await Section.findById(req.params.sectionId);
-        if (!section) {
-            return res.status(404).json({ message: 'Section not found' });
-        }
+router.post('/section/:sectionId/complete', protect, catchAsync(async (req, res) => {
+    const section = await Section.findById(req.params.sectionId);
+    if (!section) return res.status(404).json({ message: 'Section not found' });
 
-        if (section.type !== 'CONTENT') {
-            return res.status(400).json({ message: 'Only content sections can be manually completed' });
-        }
+    if (section.type !== 'CONTENT') {
+        return res.status(400).json({ message: 'Only content sections can be manually completed' });
+    }
 
-        // Update or create progress
-        let progress = await Progress.findOne({
+    let progress = await Progress.findOne({
+        userId: req.user._id,
+        sectionId: req.params.sectionId,
+    });
+
+    if (!progress) {
+        const module = await Module.findById(section.moduleId);
+        progress = await Progress.create({
             userId: req.user._id,
+            subjectId: module.subjectId,
+            moduleId: section.moduleId,
             sectionId: req.params.sectionId,
+            status: 'UNLOCKED'
         });
+    }
 
-        // Section access is always open
-        if (!progress) {
+    if (progress.status === 'COMPLETED') {
+        const nextSection = await Section.findOne({ moduleId: section.moduleId, order: section.order + 1 });
+        return res.json({ message: 'Already completed', nextSectionId: nextSection ? nextSection._id : null });
+    }
+
+    progress.status = 'COMPLETED';
+    progress.completedAt = new Date();
+    await progress.save();
+
+    const nextSection = await Section.findOne({ moduleId: section.moduleId, order: section.order + 1 });
+    if (nextSection) {
+        let nextProgress = await Progress.findOne({ userId: req.user._id, sectionId: nextSection._id });
+        if (!nextProgress) {
             const module = await Module.findById(section.moduleId);
-            progress = await Progress.create({
+            await Progress.create({
                 userId: req.user._id,
                 subjectId: module.subjectId,
                 moduleId: section.moduleId,
-                sectionId: req.params.sectionId,
+                sectionId: nextSection._id,
                 status: 'UNLOCKED'
             });
+        } else if (nextProgress.status === 'LOCKED') {
+            nextProgress.status = 'UNLOCKED';
+            await nextProgress.save();
         }
-
-        // Idempotency: If already completed, just return success
-        if (progress.status === 'COMPLETED') {
-            // Find next section to return consistent response
-            const nextSection = await Section.findOne({
-                moduleId: section.moduleId,
-                order: section.order + 1,
-            });
-            return res.json({ message: 'Section already completed', nextSectionId: nextSection ? nextSection._id : null });
-        }
-
-        progress.status = 'COMPLETED';
-        progress.completedAt = new Date();
-        await progress.save();
-
-        // Unlock next section
-        const nextSection = await Section.findOne({
-            moduleId: section.moduleId,
-            order: section.order + 1,
-        });
-
-        if (nextSection) {
-            let nextProgress = await Progress.findOne({
-                userId: req.user._id,
-                sectionId: nextSection._id,
-            });
-
-            if (!nextProgress) {
-                const module = await Module.findById(section.moduleId);
-                await Progress.create({
-                    userId: req.user._id,
-                    subjectId: module.subjectId,
-                    moduleId: section.moduleId,
-                    sectionId: nextSection._id,
-                    status: 'UNLOCKED'
-                });
-            } else if (nextProgress.status === 'LOCKED') {
-                nextProgress.status = 'UNLOCKED';
-                await nextProgress.save();
-            }
-        }
-
-        // Check for module completion and rewards
-        await checkModuleCompletion(req.user._id, section.moduleId);
-
-        res.json({ message: 'Section completed', nextSectionId: nextSection ? nextSection._id : null });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
     }
+
+    await checkModuleCompletion(req.user._id, section.moduleId);
+    res.json({ message: 'Section completed', nextSectionId: nextSection ? nextSection._id : null });
+}));
+
+// @desc    Diagnostic health check
+// @route   GET /api/learning/debug/health
+// @access  Private
+router.get('/debug/health', protect, (req, res) => {
+    res.json({
+        status: 'ok',
+        version: '2.0.2-nuclear-debug',
+        timestamp: new Date().toISOString()
+    });
 });
 
 // @desc    Get student dashboard stats
@@ -173,123 +149,103 @@ router.post('/section/:sectionId/complete', protect, async (req, res) => {
 // @access  Private
 router.get('/stats', protect, async (req, res) => {
     try {
-        if (!req.user) return res.status(401).json({ message: 'User not found' });
+        console.log(`[NUCLEAR-DEBUG] Hit /api/learning/stats - User: ${req.user._id}`);
+        const cacheKey = `learning:stats:${req.user._id}`;
+        // Short cache for stats as they change frequently
+        const cachedData = await cacheService.get(cacheKey);
+        if (cachedData) {
+            // Update version if needed or just return
+            return res.json(cachedData);
+        }
 
-        const progress = await Progress.find({ userId: req.user._id });
+        const progressDocs = await Progress.find({ userId: req.user._id });
+        const completedProgress = progressDocs.filter(p => p.status === 'COMPLETED');
 
-        // Total Points
-        const totalPoints = progress.reduce((sum, p) => sum + (p.score || 0), 0);
-
-        // Hours Learned (timeSpent is in minutes)
-        const totalMinutes = progress.reduce((sum, p) => sum + (p.timeSpent || 0), 0);
+        const totalPoints = progressDocs.reduce((sum, p) => sum + (p.score || 0), 0);
+        const totalMinutes = progressDocs.reduce((sum, p) => sum + (p.timeSpent || 0), 0);
         const hoursLearned = parseFloat((totalMinutes / 60).toFixed(1));
 
-        // Levels & Points Splitting
-        let coreLevelsCompleted = 0;
-        let specializationLevelsCompleted = 0;
-        let corePoints = 0;
-        let specializationPoints = 0;
+        let coreLevels = 0;
+        let specLevels = 0;
+        let corePts = 0;
+        let specPts = 0;
 
-        const allModuleIds = [...new Set(progress.filter(p => p.moduleId).map(p => p.moduleId.toString()))];
-        const modulesData = await Module.find({ _id: { $in: allModuleIds } });
+        const moduleIds = [...new Set(progressDocs.filter(p => p.moduleId).map(p => p.moduleId.toString()))];
+        const modules = await Module.find({ _id: { $in: moduleIds } });
 
-        for (const moduleId of allModuleIds) {
-            const module = modulesData.find(m => m._id.toString() === moduleId);
-            if (!module) continue;
+        for (const modId of moduleIds) {
+            const mod = modules.find(m => m._id.toString() === modId);
+            if (!mod) continue;
 
-            const totalSectionsInModule = await Section.countDocuments({ moduleId });
-            const completedSectionsInModule = completedSections.filter(p => p.moduleId && p.moduleId.toString() === moduleId).length;
-
-            const moduleScore = progress
-                .filter(p => p.moduleId && p.moduleId.toString() === moduleId)
+            const totalInMod = await Section.countDocuments({ moduleId: modId });
+            const completedInMod = completedProgress.filter(p => p.moduleId && p.moduleId.toString() === modId).length;
+            const scoreInMod = progressDocs
+                .filter(p => p.moduleId && p.moduleId.toString() === modId)
                 .reduce((sum, p) => sum + (p.score || 0), 0);
 
-            if (module.isCore) {
-                corePoints += moduleScore;
-                if (totalSectionsInModule > 0 && totalSectionsInModule === completedSectionsInModule) {
-                    coreLevelsCompleted++;
-                }
+            if (mod.isCore) {
+                corePts += scoreInMod;
+                if (totalInMod > 0 && totalInMod === completedInMod) coreLevels++;
             } else {
-                specializationPoints += moduleScore;
-                if (totalSectionsInModule > 0 && totalSectionsInModule === completedSectionsInModule) {
-                    specializationLevelsCompleted++;
-                }
+                specPts += scoreInMod;
+                if (totalInMod > 0 && totalInMod === completedInMod) specLevels++;
             }
         }
 
-        // Games Played (Count of COMPLETED sections of type GAME)
-        const completedSectionIds = completedSections.map(p => p.sectionId);
-        const gamesPlayed = await Section.countDocuments({
-            _id: { $in: completedSectionIds },
-            type: 'GAME'
-        });
+        const completedIds = completedProgress.map(p => p.sectionId);
+        const gamesPlayed = await Section.countDocuments({ _id: { $in: completedIds }, type: 'GAME' });
 
-        // Day Streak
-        const completionDates = progress
+        const completionDates = progressDocs
             .filter(p => p.completedAt)
             .map(p => new Date(p.completedAt).toDateString());
-
         const uniqueDates = [...new Set(completionDates)].map(d => new Date(d)).sort((a, b) => b - a);
 
         let streak = 0;
-        let today = new Date();
-        today.setHours(0, 0, 0, 0);
-
         if (uniqueDates.length > 0) {
-            let lastDate = uniqueDates[0];
-            const diffTime = Math.abs(today - lastDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays <= 1) { // Today or Yesterday
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const diffDays = Math.ceil(Math.abs(today - uniqueDates[0]) / (1000 * 60 * 60 * 24));
+            if (diffDays <= 1) {
                 streak = 1;
                 for (let i = 1; i < uniqueDates.length; i++) {
-                    const d1 = uniqueDates[i - 1];
-                    const d2 = uniqueDates[i];
-                    const diff = Math.abs(d1 - d2);
-                    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                    if (days === 1) {
-                        streak++;
-                    } else {
-                        break;
-                    }
+                    if (Math.ceil(Math.abs(uniqueDates[i - 1] - uniqueDates[i]) / (1000 * 60 * 60 * 24)) === 1) streak++;
+                    else break;
                 }
             }
         }
 
-        // Accuracy %
-        const totalAttempts = progress.reduce((sum, p) => sum + (p.attempts || 0), 0);
-        const totalAccuracy = totalAttempts > 0
-            ? Math.round((completedSections.length / totalAttempts) * 100)
-            : 0;
+        const totalAttempts = progressDocs.reduce((sum, p) => sum + (p.attempts || 0), 0);
+        const accuracy = totalAttempts > 0 ? Math.round((completedProgress.length / totalAttempts) * 100) : 0;
 
-        // Skill Distribution (Subject-wise points)
-        const subjects = await Subject.find({ isActive: true });
-        const skillDistribution = await Promise.all(subjects.map(async (subject) => {
-            const subjectProgress = progress.filter(p => p.subjectId && p.subjectId.toString() === subject._id.toString());
-            const subjectScore = subjectProgress.reduce((sum, p) => sum + (p.score || 0), 0);
-            return {
-                subject: subject.title,
-                score: subjectScore,
-                isCore: subject.isCore
-            };
+        const allSubjects = await Subject.find({ isActive: true });
+        const skillDist = await Promise.all(allSubjects.map(async (subj) => {
+            const subjScore = progressDocs
+                .filter(p => p.subjectId && p.subjectId.toString() === subj._id.toString())
+                .reduce((sum, p) => sum + (p.score || 0), 0);
+            return { subject: subj.title, score: subjScore, isCore: subj.isCore };
         }));
 
-        res.json({
-            levelsCompleted: coreLevelsCompleted + specializationLevelsCompleted,
-            fundamentalLevelsCompleted: coreLevelsCompleted,
-            pathSpecificLevelsCompleted: specializationLevelsCompleted,
+        const statsResponse = {
+            v: '2.0.2-nuclear-ready',
+            levelsCompleted: coreLevels + specLevels,
+            fundamentalLevelsCompleted: coreLevels,
+            pathSpecificLevelsCompleted: specLevels,
             dayStreak: streak,
-            totalPoints: corePoints + specializationPoints,
-            fundamentalPoints: corePoints,
-            pathSpecificPoints: specializationPoints,
+            totalPoints: corePts + specPts,
+            fundamentalPoints: corePts,
+            pathSpecificPoints: specPts,
             hoursLearned,
             gamesPlayed,
-            accuracy: totalAccuracy,
+            accuracy,
             totalAttempts,
-            skillDistribution
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+            skillDistribution: skillDist
+        };
+
+        await cacheService.set(cacheKey, statsResponse, 60); // 1 minute
+        res.json(statsResponse);
+    } catch (err) {
+        console.error('[NUCLEAR-DEBUG] ERROR in /api/learning/stats:', err);
+        res.status(500).json({ message: err.message, stack: err.stack, diagnostic: 'Stats failure' });
     }
 });
 
@@ -298,68 +254,47 @@ router.get('/stats', protect, async (req, res) => {
 // @access  Private
 router.get('/detailed-progress', protect, async (req, res) => {
     try {
-        if (!req.user) return res.status(401).json({ message: 'User not found' });
-
-        const userCareer = req.user.activeCareerTrack ? await CareerTrack.findById(req.user.activeCareerTrack) : null;
-
+        console.log(`[NUCLEAR-DEBUG] Hit /api/learning/detailed-progress - User: ${req.user._id}`);
         const subjects = await Subject.find({ isActive: true });
-        const detailedProgress = await Promise.all(subjects.map(async (subject) => {
+        const detailed = await Promise.all(subjects.map(async (subject) => {
             const modules = await Module.find({ subjectId: subject._id }).sort({ order: 1 });
-
-            const moduleProgress = await Promise.all(modules.map(async (module) => {
-                const totalSections = await Section.countDocuments({ moduleId: module._id });
-                const completedSections = await Progress.countDocuments({
-                    userId: req.user._id,
-                    moduleId: module._id,
-                    status: 'COMPLETED'
-                });
-
-                const lastAccessedSection = await Progress.findOne({
-                    userId: req.user._id,
-                    moduleId: module._id
-                }).sort({ updatedAt: -1 }).populate('sectionId');
-
-                const unlockedSections = await Progress.countDocuments({
-                    userId: req.user._id,
-                    moduleId: module._id,
-                    status: 'UNLOCKED'
-                });
-
-                // Career Gating REMOVED - All content is unlocked
-                let isLocked = false;
-                let lockReason = '';
+            const moduleDetails = await Promise.all(modules.map(async (mod) => {
+                const total = await Section.countDocuments({ moduleId: mod._id });
+                const completed = await Progress.countDocuments({ userId: req.user._id, moduleId: mod._id, status: 'COMPLETED' });
+                const unlocked = await Progress.countDocuments({ userId: req.user._id, moduleId: mod._id, status: 'UNLOCKED' });
+                const last = await Progress.findOne({ userId: req.user._id, moduleId: mod._id }).sort({ updatedAt: -1 }).populate('sectionId');
 
                 return {
-                    _id: module._id,
-                    title: module.title,
-                    order: module.order,
-                    isCore: module.isCore,
-                    isLocked,
-                    lockReason,
-                    totalSections,
-                    completedSections,
-                    unlockedSections,
-                    progress: totalSections > 0 ? Math.round((completedSections / totalSections) * 100) : 0,
-                    lastSection: lastAccessedSection && lastAccessedSection.sectionId ? lastAccessedSection.sectionId.title : 'Not started'
+                    _id: mod._id,
+                    title: mod.title,
+                    order: mod.order,
+                    isCore: mod.isCore,
+                    isLocked: false,
+                    lockReason: '',
+                    totalSections: total,
+                    completedSectionsCount: completed,
+                    unlockedSectionsCount: unlocked,
+                    progress: total > 0 ? Math.round((completed / total) * 100) : 0,
+                    lastSection: last && last.sectionId ? last.sectionId.title : 'Not started'
                 };
             }));
 
-            const totalSubjectSections = moduleProgress.reduce((sum, m) => sum + m.totalSections, 0);
-            const completedSubjectSections = moduleProgress.reduce((sum, m) => sum + m.completedSections, 0);
+            const sTotal = moduleDetails.reduce((sum, m) => sum + m.totalSections, 0);
+            const sCompleted = moduleDetails.reduce((sum, m) => sum + m.completedSectionsCount, 0);
 
             return {
                 _id: subject._id,
                 title: subject.title,
                 isCore: subject.isCore,
                 image: subject.image,
-                modules: moduleProgress,
-                overallProgress: totalSubjectSections > 0 ? Math.round((completedSubjectSections / totalSubjectSections) * 100) : 0
+                modules: moduleDetails,
+                overallProgress: sTotal > 0 ? Math.round((sCompleted / sTotal) * 100) : 0
             };
         }));
-
-        res.json(detailedProgress);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.json(detailed);
+    } catch (err) {
+        console.error('[NUCLEAR-DEBUG] ERROR in /api/learning/detailed-progress:', err);
+        res.status(500).json({ message: err.message, stack: err.stack, diagnostic: 'Detailed progress failure' });
     }
 });
 
@@ -368,34 +303,19 @@ router.get('/detailed-progress', protect, async (req, res) => {
 // @access  Private
 router.get('/learning-path', protect, async (req, res) => {
     try {
-        if (!req.user) return res.status(401).json({ message: 'User not found' });
-
+        console.log(`[NUCLEAR-DEBUG] Hit /api/learning/learning-path - User: ${req.user._id}`);
         const subjects = await Subject.find({ isActive: true });
-        const learningPath = await Promise.all(subjects.map(async (subject) => {
+        const path = await Promise.all(subjects.map(async (subject) => {
             const modules = await Module.find({ subjectId: subject._id }).sort({ order: 1 });
-            const moduleIds = modules.map(m => m._id);
-            const totalSections = moduleIds.length > 0 ? await Section.countDocuments({ moduleId: { $in: moduleIds } }) : 0;
+            const total = await Section.countDocuments({ moduleId: { $in: modules.map(m => m._id) } });
+            const completed = await Progress.countDocuments({ userId: req.user._id, subjectId: subject._id, status: 'COMPLETED' });
 
-            const progress = await Progress.find({
-                userId: req.user._id,
-                subjectId: subject._id,
-                status: 'COMPLETED'
-            });
-
-            const completedCount = progress.length;
-            const progressPercent = totalSections > 0 ? Math.round((completedCount / totalSections) * 100) : 0;
-
-            // Find current module (first one not fully completed)
-            let currentModule = modules.length > 0 ? modules[0] : null;
-            for (const module of modules) {
-                const moduleSections = await Section.countDocuments({ moduleId: module._id });
-                const moduleCompleted = await Progress.countDocuments({
-                    userId: req.user._id,
-                    moduleId: module._id,
-                    status: 'COMPLETED'
-                });
-                if (moduleCompleted < moduleSections) {
-                    currentModule = module;
+            let current = modules.length > 0 ? modules[0] : null;
+            for (const mod of modules) {
+                const modTotal = await Section.countDocuments({ moduleId: mod._id });
+                const modCompleted = await Progress.countDocuments({ userId: req.user._id, moduleId: mod._id, status: 'COMPLETED' });
+                if (modCompleted < modTotal) {
+                    current = mod;
                     break;
                 }
             }
@@ -406,49 +326,31 @@ router.get('/learning-path', protect, async (req, res) => {
                 isCore: subject.isCore,
                 description: subject.description,
                 image: subject.image || 'https://via.placeholder.com/150',
-                progress: progressPercent,
-                currentModule: currentModule ? currentModule.title : 'N/A',
-                moduleOrder: currentModule ? currentModule.order : 1
+                progress: total > 0 ? Math.round((completed / total) * 100) : 0,
+                currentModule: current ? current.title : 'Completed',
+                moduleOrder: current ? current.order : 1
             };
         }));
-
-        res.json(learningPath);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.json(path);
+    } catch (err) {
+        console.error('[NUCLEAR-DEBUG] ERROR in /api/learning/learning-path:', err);
+        res.status(500).json({ message: err.message, stack: err.stack, diagnostic: 'Learning path failure' });
     }
 });
 
 // @desc    Get activity heatmap data (last 365 days)
 // @route   GET /api/learning/heatmap
 // @access  Private
-router.get('/heatmap', protect, async (req, res) => {
-    try {
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+router.get('/heatmap', protect, catchAsync(async (req, res) => {
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-        const activity = await Progress.aggregate([
-            {
-                $match: {
-                    userId: req.user._id,
-                    status: 'COMPLETED',
-                    completedAt: { $gte: oneYearAgo }
-                }
-            },
-            {
-                $group: {
-                    _id: {
-                        $dateToString: { format: "%Y-%m-%d", date: "$completedAt" }
-                    },
-                    count: { $sum: 1 }
-                }
-            },
-            { $sort: { "_id": 1 } }
-        ]);
-
-        res.json(activity);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+    const activity = await Progress.aggregate([
+        { $match: { userId: req.user._id, status: 'COMPLETED', completedAt: { $gte: oneYearAgo } } },
+        { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$completedAt" } }, count: { $sum: 1 } } },
+        { $sort: { "_id": 1 } }
+    ]);
+    res.json(activity);
+}));
 
 module.exports = router;

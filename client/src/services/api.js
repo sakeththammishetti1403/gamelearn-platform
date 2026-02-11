@@ -1,8 +1,21 @@
 import axios from 'axios';
 import { queueForSync } from './OfflineManager';
 
-const API_URL =
-    import.meta.env.VITE_API_URL || 'https://gamelearn-platform.onrender.com/api';
+// Dynamic API URL resolution
+const getApiUrl = () => {
+    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+
+    const { hostname } = window.location;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'http://localhost:5000/api';
+    }
+    return 'https://api.leveluped.onrender.com/api';
+};
+
+const API_URL = getApiUrl();
+
+// Export API_URL for usage in components (e.g., OAuth redirection)
+export { API_URL };
 
 // Create axios instance
 const api = axios.create({
@@ -24,12 +37,21 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        console.error('❌ API Error Details:', {
+            message: error.response?.data?.message || error.message,
+            status: error.response?.status,
+            url: error.config?.url,
+            method: error.config?.method,
+            fullError: error
+        });
+
         if (error.response?.status === 401) {
+            console.warn('🔒 Unauthorized - Redirecting to login');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';
         }
-        console.error('API Error:', error.response?.data?.message || error.message);
+
         return Promise.reject(error);
     }
 );
@@ -81,5 +103,11 @@ export const getUsers = () => api.get('/admin/users');
 export const getStats = () => api.get('/admin/stats');
 export const updateSubjectStatus = (id, isActive) => api.patch(`/admin/subjects/${id}/status`, { isActive });
 export const updateModuleStatus = (id, isActive) => api.patch(`/admin/modules/${id}/status`, { isActive });
+
+// Helper for OAuth URLs
+export const getAuthURL = (provider) => {
+    // Return relative URL for development if needed, or absolute API URL
+    return `${API_URL}/auth/${provider}`;
+};
 
 export default api;

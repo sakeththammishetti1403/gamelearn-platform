@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ContactForm from '../Support/ContactForm';
 import Documentation from '../Support/Documentation';
+import AIChat from '../Support/AIChat';
 
 const SupportPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [view, setView] = useState('menu'); // menu, contact, docs
+    const [view, setView] = useState('menu'); // menu, contact, docs, chat
 
     // Check for pre-filled data in location state
     const { initialSubject, initialMessage } = location.state || {};
@@ -52,13 +53,14 @@ const SupportPage = () => {
                     </div>
 
                     <div
+                        onClick={() => setView('chat')}
                         className="card"
-                        style={{ padding: '40px', textAlign: 'center' }}
+                        style={{ padding: '40px', textAlign: 'center', cursor: 'pointer', border: '2px solid var(--primary-light)' }}
                     >
-                        <div style={{ fontSize: '48px', marginBottom: '24px' }}>💬</div>
-                        <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '12px' }}>Live Chat</h3>
-                        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>Connect with a tutor instantly for quick doubts.</p>
-                        <button className="btn btn-outline" style={{ width: '100%', opacity: 0.6, cursor: 'not-allowed' }}>Currently Offline</button>
+                        <div style={{ fontSize: '48px', marginBottom: '24px' }}>🤖</div>
+                        <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '12px' }}>AI Live Tutor</h3>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>Connect with our AI tutor instantly for help with your subjects.</p>
+                        <button className="btn btn-primary" style={{ width: '100%' }}>Start Chatting</button>
                     </div>
                 </div>
             )}
@@ -82,6 +84,12 @@ const SupportPage = () => {
                         ← Back to Support
                     </button>
                     <Documentation />
+                </div>
+            )}
+
+            {view === 'chat' && (
+                <div className="card" style={{ padding: 0, overflow: 'hidden', maxWidth: '800px', margin: '0 auto' }}>
+                    <AIChat onBack={handleBack} />
                 </div>
             )}
         </div>

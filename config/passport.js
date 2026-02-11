@@ -5,55 +5,47 @@ const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 const User = require('../models/User');
 
 module.exports = function (passport) {
+    // Helper to generate a unique placeholder email
+    const placeholderEmail = (provider, id) => `${provider}_${id}@gamelearn.internal`;
+
     // ============================================
     // GOOGLE STRATEGY
     // ============================================
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: '/api/auth/google/callback'
+        callbackURL: `${process.env.BACKEND_URL || 'https://gamelearn-platform-1.onrender.com'}/api/auth/google/callback`
     },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log('🔐 [OAUTH] Google login attempt:', profile.displayName);
-
-                // Check if user exists
-                let user = await User.findOne({ providerId: profile.id, authProvider: 'google' });
+                let user = await User.findOne({
+                    $or: [
+                        { providerId: profile.id, authProvider: 'google' },
+                        { email: profile.emails?.[0]?.value }
+                    ]
+                });
 
                 if (user) {
-                    console.log('✅ [OAUTH] Existing Google user found');
+                    if (user.authProvider !== 'google') {
+                        user.authProvider = 'google';
+                        user.providerId = profile.id;
+                    }
+                    user.avatar = profile.photos?.[0]?.value || user.avatar;
+                    await user.save();
                     return done(null, user);
                 }
 
-                // Check if email already exists with different provider
-                const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
-                if (email) {
-                    user = await User.findOne({ email });
-                    if (user) {
-                        // Link Google to existing account
-                        user.authProvider = 'google';
-                        user.providerId = profile.id;
-                        user.avatar = profile.photos && profile.photos[0] ? profile.photos[0].value : '';
-                        await user.save();
-                        console.log('🔗 [OAUTH] Linked Google to existing account');
-                        return done(null, user);
-                    }
-                }
-
-                // Create new user
                 user = await User.create({
                     name: profile.displayName,
-                    email: email || `google_${profile.id}@placeholder.com`,
+                    email: profile.emails?.[0]?.value || placeholderEmail('google', profile.id),
                     authProvider: 'google',
                     providerId: profile.id,
-                    avatar: profile.photos && profile.photos[0] ? profile.photos[0].value : '',
+                    avatar: profile.photos?.[0]?.value || '',
                     role: 'student'
                 });
 
-                console.log('✅ [OAUTH] New Google user created');
                 done(null, user);
             } catch (error) {
-                console.error('❌ [OAUTH] Google auth error:', error);
                 done(error, null);
             }
         }));
@@ -64,51 +56,40 @@ module.exports = function (passport) {
     passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: '/api/auth/github/callback',
+        callbackURL: `${process.env.BACKEND_URL || 'https://gamelearn-platform-1.onrender.com'}/api/auth/github/callback`,
         scope: ['user:email']
     },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log('🔐 [OAUTH] GitHub login attempt:', profile.username);
-
-                // Check if user exists
-                let user = await User.findOne({ providerId: profile.id, authProvider: 'github' });
+                const email = profile.emails?.[0]?.value;
+                let user = await User.findOne({
+                    $or: [
+                        { providerId: profile.id, authProvider: 'github' },
+                        { email: email && email !== '' ? email : undefined }
+                    ].filter(q => q.email !== undefined || q.providerId !== undefined)
+                });
 
                 if (user) {
-                    console.log('✅ [OAUTH] Existing GitHub user found');
+                    if (user.authProvider !== 'github') {
+                        user.authProvider = 'github';
+                        user.providerId = profile.id;
+                    }
+                    user.avatar = profile.photos?.[0]?.value || user.avatar;
+                    await user.save();
                     return done(null, user);
                 }
 
-                // Get email (GitHub may not provide it)
-                const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
-
-                if (email) {
-                    user = await User.findOne({ email });
-                    if (user) {
-                        // Link GitHub to existing account
-                        user.authProvider = 'github';
-                        user.providerId = profile.id;
-                        user.avatar = profile.photos && profile.photos[0] ? profile.photos[0].value : '';
-                        await user.save();
-                        console.log('🔗 [OAUTH] Linked GitHub to existing account');
-                        return done(null, user);
-                    }
-                }
-
-                // Create new user
                 user = await User.create({
                     name: profile.displayName || profile.username,
-                    email: email || `github_${profile.id}@placeholder.com`,
+                    email: email || placeholderEmail('github', profile.id),
                     authProvider: 'github',
                     providerId: profile.id,
-                    avatar: profile.photos && profile.photos[0] ? profile.photos[0].value : '',
+                    avatar: profile.photos?.[0]?.value || '',
                     role: 'student'
                 });
 
-                console.log('✅ [OAUTH] New GitHub user created');
                 done(null, user);
             } catch (error) {
-                console.error('❌ [OAUTH] GitHub auth error:', error);
                 done(error, null);
             }
         }));
@@ -119,61 +100,57 @@ module.exports = function (passport) {
     passport.use(new LinkedInStrategy({
         clientID: process.env.LINKEDIN_CLIENT_ID,
         clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-        callbackURL: '/api/auth/linkedin/callback',
+        callbackURL: `${process.env.BACKEND_URL || 'https://gamelearn-platform-1.onrender.com'}/api/auth/linkedin/callback`,
         scope: ['r_emailaddress', 'r_liteprofile']
     },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log('🔐 [OAUTH] LinkedIn login attempt:', profile.displayName);
-
-                // Check if user exists
-                let user = await User.findOne({ providerId: profile.id, authProvider: 'linkedin' });
+                let user = await User.findOne({
+                    $or: [
+                        { providerId: profile.id, authProvider: 'linkedin' },
+                        { email: profile.emails?.[0]?.value }
+                    ]
+                });
 
                 if (user) {
-                    console.log('✅ [OAUTH] Existing LinkedIn user found');
+                    if (user.authProvider !== 'linkedin') {
+                        user.authProvider = 'linkedin';
+                        user.providerId = profile.id;
+                    }
+                    user.avatar = profile.photos?.[0]?.value || user.avatar;
+                    await user.save();
                     return done(null, user);
                 }
 
-                // Get email
-                const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
-
-                if (email) {
-                    user = await User.findOne({ email });
-                    if (user) {
-                        // Link LinkedIn to existing account
-                        user.authProvider = 'linkedin';
-                        user.providerId = profile.id;
-                        user.avatar = profile.photos && profile.photos[0] ? profile.photos[0].value : '';
-                        await user.save();
-                        console.log('🔗 [OAUTH] Linked LinkedIn to existing account');
-                        return done(null, user);
-                    }
-                }
-
-                // Create new user
                 user = await User.create({
                     name: profile.displayName,
-                    email: email || `linkedin_${profile.id}@placeholder.com`,
+                    email: profile.emails?.[0]?.value || placeholderEmail('linkedin', profile.id),
                     authProvider: 'linkedin',
                     providerId: profile.id,
-                    avatar: profile.photos && profile.photos[0] ? profile.photos[0].value : '',
+                    avatar: profile.photos?.[0]?.value || '',
                     role: 'student'
                 });
 
-                console.log('✅ [OAUTH] New LinkedIn user created');
                 done(null, user);
             } catch (error) {
-                console.error('❌ [OAUTH] LinkedIn auth error:', error);
                 done(error, null);
             }
         }));
 
-    // Serialize user for session
-    passport.serializeUser((user, done) => {
-        done(null, user.id);
-    });
+    // ============================================
+    // LEETCODE STRATEGY (PLACEHOLDER)
+    // ============================================
+    // LeetCode does not have a public OAuth. 
+    // This is kept for UI consistency but will redirect to login error if used without custom implementation.
+    passport.use('leetcode', new GoogleStrategy({
+        clientID: 'placeholder',
+        clientSecret: 'placeholder',
+        callbackURL: '/api/auth/leetcode/callback'
+    }, (accessToken, refreshToken, profile, done) => {
+        done(new Error('LeetCode registration is currently invitation-only or requires manual account link.'), null);
+    }));
 
-    // Deserialize user from session
+    passport.serializeUser((user, done) => done(null, user.id));
     passport.deserializeUser(async (id, done) => {
         try {
             const user = await User.findById(id);

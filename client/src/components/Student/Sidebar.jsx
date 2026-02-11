@@ -69,8 +69,8 @@ function Sidebar() {
                     color: 'white',
                     fontSize: '16px',
                     boxShadow: '0 4px 10px rgba(51, 84, 149, 0.25)'
-                }}>G</div>
-                GameLearn
+                }}>L</div>
+                LevelUpED
             </div>
 
             <nav style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>

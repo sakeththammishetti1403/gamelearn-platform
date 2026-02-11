@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const helmet = require('helmet');
 const dotenv = require('dotenv');
 const http = require('http');
 const { Server } = require('socket.io');
+const errorHandler = require('./middleware/errorMiddleware');
 
 // 1. Load Env
 dotenv.config();
@@ -18,11 +20,12 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
 // 3. Global Middleware
+app.use(helmet()); // Security headers
 app.use(cors({
     origin: [
         'http://localhost:3000',
         'http://localhost:5173',
-        'https://gamelearn-platform-seven.vercel.app'
+        'https://leveluped.vercel.app'
     ],
     credentials: true
 }));
@@ -48,7 +51,7 @@ const io = new Server(server, {
         origin: [
             'http://localhost:3000',
             'http://localhost:5173',
-            'https://gamelearn-platform-seven.vercel.app'
+            'https://leveluped.vercel.app'
         ],
         credentials: true
     }
@@ -57,6 +60,10 @@ const io = new Server(server, {
 // 6. Multiplayer Arena Logic (Delegated for Production-Grade Gameplay)
 const socketHandler = require('./socket/gameHandler');
 socketHandler(io);
+
+// 6b. Real-time Chat Logic
+const chatHandler = require('./socket/chatHandler');
+chatHandler(io);
 
 // 7. Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -76,15 +83,18 @@ app.use('/api/support', require('./routes/support'));
 app.use('/api/leaderboard', require('./routes/leaderboard'));
 app.use('/api/reward', require('./routes/reward'));
 
-// 8. Base Routes
-app.get('/', (req, res) => res.send('GameLearn Production Server (REST + Real-time) is running'));
+// 8. Error Handling Middleware (Must be last)
+app.use(errorHandler);
+
+// 9. Base Routes
+app.get('/', (req, res) => res.send('LevelUpED Production Server (REST + Real-time) is running'));
 app.get('/health', (req, res) => res.status(200).json({
     status: 'active',
     services: ['api', 'sockets'],
     timestamp: new Date()
 }));
 
-// 9. Start Unified Server with Port Collision Handling
+// 10. Start Unified Server with Port Collision Handling
 server.listen(PORT, () => {
     console.log(`🚀 Unified Server + Multiplayer Arena running on port ${PORT}`);
 }).on('error', (err) => {
