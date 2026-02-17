@@ -29,7 +29,12 @@ function validateEnv() {
     for (const varName of oauthEnvVars) {
         if (!process.env[varName]) {
             missing.push(varName);
-        } else if (process.env[varName].includes('your_') || process.env[varName].includes('_here')) {
+        } else if (
+            process.env[varName] === 'DISABLED' || 
+            process.env[varName] === 'placeholder' ||
+            process.env[varName].includes('your_') || 
+            process.env[varName].includes('_here')
+        ) {
             placeholder.push(varName);
         }
     }
@@ -41,17 +46,20 @@ function validateEnv() {
     }
 
     if (placeholder.length > 0) {
-        console.warn('⚠️  WARNING: OAuth credentials are placeholders. Social login will NOT work:');
+        console.warn('\n⚠️  WARNING: OAuth credentials need configuration:');
         placeholder.forEach(v => console.warn(`   - ${v}`));
-        console.warn('   Update .env with real OAuth credentials from:');
+        console.warn('\n📖 Social login will NOT work until you configure OAuth credentials.');
+        console.warn('   See OAUTH_SETUP.md for detailed setup instructions.');
+        console.warn('\n   Quick links:');
         console.warn('   - Google: https://console.cloud.google.com/');
         console.warn('   - GitHub: https://github.com/settings/developers');
-        console.warn('   - LinkedIn: https://www.linkedin.com/developers/apps');
+        console.warn('   - LinkedIn: https://www.linkedin.com/developers/apps\n');
     }
 
     console.log('✅ Environment variables loaded');
     console.log(`   Frontend URL: ${process.env.FRONTEND_URL}`);
-    console.log(`   OAuth Status: ${placeholder.length === 0 ? 'READY' : 'NOT CONFIGURED'}`);
+    console.log(`   Backend URL: ${process.env.BACKEND_URL || 'Not set (using default)'}`);
+    console.log(`   OAuth Status: ${placeholder.length === 0 ? '✅ READY' : '⚠️  NEEDS CONFIGURATION'}`);
 }
 
 module.exports = validateEnv;

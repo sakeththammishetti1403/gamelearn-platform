@@ -178,3 +178,103 @@
   "user": "anonymous"
 }
 ---
+{
+  "timestamp": "2026-02-12T05:47:35.775Z",
+  "message": "getaddrinfo ENOTFOUND ac-bffgwdj-shard-00-01.8vwfsmh.mongodb.net",
+  "stack": "MongoServerSelectionError: getaddrinfo ENOTFOUND ac-bffgwdj-shard-00-01.8vwfsmh.mongodb.net\n    at Topology.selectServer (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\sdam\\topology.js:346:38)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processTimers (node:internal/timers:526:9)\n    at async tryOperation (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\operations\\execute_operation.js:150:18)\n    at async executeOperation (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\operations\\execute_operation.js:80:16)\n    at async FindCursor._initialize (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\find_cursor.js:62:26)\n    at async FindCursor.cursorInit (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:620:27)\n    at async FindCursor.fetchBatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:654:13)\n    at async FindCursor.next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:326:17)\n    at async Collection.findOne (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\collection.js:313:24)",
+  "path": "/api/auth/me",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-12T05:53:05.482Z",
+  "message": "getaddrinfo ENOTFOUND ac-bffgwdj-shard-00-01.8vwfsmh.mongodb.net",
+  "stack": "MongoServerSelectionError: getaddrinfo ENOTFOUND ac-bffgwdj-shard-00-01.8vwfsmh.mongodb.net\n    at Topology.selectServer (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\sdam\\topology.js:346:38)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at listOnTimeout (node:internal/timers:555:9)\n    at process.processTimers (node:internal/timers:529:7)\n    at async tryOperation (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\operations\\execute_operation.js:150:18)\n    at async executeOperation (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\operations\\execute_operation.js:80:16)\n    at async FindCursor._initialize (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\find_cursor.js:62:26)\n    at async FindCursor.cursorInit (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:620:27)\n    at async FindCursor.fetchBatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:654:13)\n    at async FindCursor.next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:326:17)",
+  "path": "/api/learning/stats",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-12T05:53:05.596Z",
+  "message": "getaddrinfo ENOTFOUND ac-bffgwdj-shard-00-01.8vwfsmh.mongodb.net",
+  "stack": "MongoServerSelectionError: getaddrinfo ENOTFOUND ac-bffgwdj-shard-00-01.8vwfsmh.mongodb.net\n    at Topology.selectServer (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\sdam\\topology.js:346:38)\n    at async tryOperation (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\operations\\execute_operation.js:150:18)\n    at async executeOperation (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\operations\\execute_operation.js:80:16)\n    at async FindCursor._initialize (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\find_cursor.js:62:26)\n    at async FindCursor.cursorInit (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:620:27)\n    at async FindCursor.fetchBatch (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:654:13)\n    at async FindCursor.next (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\cursor\\abstract_cursor.js:326:17)\n    at async Collection.findOne (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongodb\\lib\\collection.js:313:24)\n    at async model.Query._findOne (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongoose\\lib\\query.js:2719:15)\n    at async model.Query.exec (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongoose\\lib\\query.js:4652:63)",
+  "path": "/api/learning/learning-path",
+  "method": "GET",
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-17T17:54:09.658Z",
+  "message": "next is not a function",
+  "stack": "TypeError: next is not a function\n    at model.<anonymous> (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\models\\User.js:62:5)\n    at async Kareem.execPre (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\kareem\\index.js:65:24)\n    at async model.$__save (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongoose\\lib\\model.js:369:5)\n    at async model.save (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongoose\\lib\\model.js:609:5)\n    at async C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongoose\\lib\\model.js:2714:9\n    at async Promise.all (index 0)\n    at async Function.create (C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\node_modules\\mongoose\\lib\\model.js:2699:11)\n    at async C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\routes\\auth.js:39:18",
+  "path": "/api/auth/register",
+  "method": "POST",
+  "body": {
+    "email": "test123@example.com",
+    "name": "saketh",
+    "password": "testpass123",
+    "role": "student"
+  },
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-17T17:58:36.280Z",
+  "message": "Invalid email or password",
+  "stack": "Error: Invalid email or password\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\routes\\auth.js:100:15",
+  "path": "/api/auth/login",
+  "method": "POST",
+  "body": {
+    "password": "WrongPassword",
+    "email": "testuser20260217232740@example.com"
+  },
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-17T17:59:20.188Z",
+  "message": "User already exists with this email",
+  "stack": "Error: User already exists with this email\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\routes\\auth.js:36:15\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "path": "/api/auth/register",
+  "method": "POST",
+  "body": {
+    "email": "testuser20260217232740@example.com",
+    "name": "Another User",
+    "password": "AnotherPass123",
+    "role": "student"
+  },
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-17T18:20:20.780Z",
+  "message": "User already exists with this email",
+  "stack": "Error: User already exists with this email\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\routes\\auth.js:36:15\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "path": "/api/auth/register",
+  "method": "POST",
+  "body": {
+    "name": "saketh",
+    "email": "thammishettisaketh104@gmail.com",
+    "password": "sakethbalu",
+    "role": "student"
+  },
+  "user": "anonymous"
+}
+---
+{
+  "timestamp": "2026-02-17T18:27:27.120Z",
+  "message": "User already exists with this email",
+  "stack": "Error: User already exists with this email\n    at C:\\Users\\Shravika\\OneDrive\\Desktop\\ant\\routes\\auth.js:36:15\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "path": "/api/auth/register",
+  "method": "POST",
+  "body": {
+    "name": "saketh",
+    "email": "22211a05v1@bvrit.ac.in",
+    "password": "sakethbalu",
+    "role": "student"
+  },
+  "user": "anonymous"
+}
+---

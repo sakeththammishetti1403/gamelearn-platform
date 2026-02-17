@@ -30,19 +30,44 @@ LevelUpED competes with world-class edtech platforms by integrating real-time fe
    npm install
    cd client && npm install
    ```
-3. Set up environment variables in `.env`:
-   - `MONGO_URI`
-   - `JWT_SECRET`
-   - `PORT=5000`
-   - `FRONTEND_URL=http://localhost:5173`
-   - `OAUTH_GOOGLE_ID / SECRET`
-   - `OAUTH_GITHUB_ID / SECRET`
-   - `OAUTH_LINKEDIN_ID / SECRET`
+3. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Update `MONGO_URI` with your MongoDB connection string
+   - Set a strong `JWT_SECRET` and `SESSION_SECRET`
+   - Configure `FRONTEND_URL` (default: http://localhost:5173)
+   - Configure `BACKEND_URL` (default: http://localhost:5000/api)
+   - For OAuth setup, see [OAUTH_SETUP.md](OAUTH_SETUP.md)
 
 4. Run the development server:
    ```bash
    npm run dev
    ```
+
+## 🔐 Authentication
+
+LevelUpED supports both local authentication (email/password) and OAuth providers.
+
+### Local Authentication
+Works out of the box - just register with email and password.
+
+### OAuth Providers
+- Google OAuth
+- GitHub OAuth
+- LinkedIn OAuth
+
+To enable OAuth, follow the detailed setup guide in [OAUTH_SETUP.md](OAUTH_SETUP.md).
+
+### Testing Authentication
+See [AUTH_TESTING.md](AUTH_TESTING.md) for comprehensive testing instructions.
+
+### Recent Authentication Fixes
+All authentication issues have been resolved:
+- ✅ Local email/password login works correctly
+- ✅ OAuth configuration is properly documented
+- ✅ Improved error handling and user feedback
+- ✅ Security best practices implemented
+
+For details, see [AUTH_FIXES_SUMMARY.md](AUTH_FIXES_SUMMARY.md).
 
 ## 📜 Role-based Features
 - **Student**: Learning paths, statistics, games, roadmap, and multiplayer arena.

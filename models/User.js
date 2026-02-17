@@ -53,17 +53,20 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Hash password before saving (only for local auth)
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
     if (!this.isModified('password') || !this.password) {
-        return next();
+        return;
     }
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    next();
 });
 
 // Method to compare password
 userSchema.methods.matchPassword = async function (enteredPassword) {
+    // OAuth users don't have passwords
+    if (!this.password) {
+        return false;
+    }
     return await bcrypt.compare(enteredPassword, this.password);
 };
 

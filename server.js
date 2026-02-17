@@ -24,6 +24,7 @@ app.use(helmet()); // Security headers
 app.use(cors({
     origin: [
         'http://localhost:3000',
+        'http://localhost:3001',
         'http://localhost:5173',
         'https://leveluped.vercel.app'
     ],
@@ -50,6 +51,7 @@ const io = new Server(server, {
     cors: {
         origin: [
             'http://localhost:3000',
+            'http://localhost:3001',
             'http://localhost:5173',
             'https://leveluped.vercel.app'
         ],
@@ -86,13 +88,24 @@ app.use('/api/reward', require('./routes/reward'));
 // 8. Error Handling Middleware (Must be last)
 app.use(errorHandler);
 
-// 9. Base Routes
-app.get('/', (req, res) => res.send('LevelUpED Production Server (REST + Real-time) is running'));
+const path = require('path');
+
+// 9. Serve Frontend (Monolithic Deployment)
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/dist')));
+
+// Health Check
 app.get('/health', (req, res) => res.status(200).json({
     status: 'active',
     services: ['api', 'sockets'],
     timestamp: new Date()
 }));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.use((req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+});
 
 // 10. Start Unified Server with Port Collision Handling
 server.listen(PORT, () => {
