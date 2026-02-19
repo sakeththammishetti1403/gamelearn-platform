@@ -17,6 +17,7 @@ const oauthEnvVars = [
 function validateEnv() {
     const missing = [];
     const placeholder = [];
+    const oauthMissing = [];
 
     // Check required vars
     for (const varName of requiredEnvVars) {
@@ -25,10 +26,10 @@ function validateEnv() {
         }
     }
 
-    // Check OAuth vars (warn if placeholder)
+    // Check OAuth vars (warn only, don't fail)
     for (const varName of oauthEnvVars) {
         if (!process.env[varName]) {
-            missing.push(varName);
+            oauthMissing.push(varName);
         } else if (
             process.env[varName] === 'DISABLED' || 
             process.env[varName] === 'placeholder' ||
@@ -43,6 +44,12 @@ function validateEnv() {
         console.error('❌ FATAL: Missing required environment variables:');
         missing.forEach(v => console.error(`   - ${v}`));
         process.exit(1);
+    }
+
+    if (oauthMissing.length > 0) {
+        console.warn('\n⚠️  OAuth credentials not configured (optional):');
+        oauthMissing.forEach(v => console.warn(`   - ${v}`));
+        console.warn('   Social login will be disabled.');
     }
 
     if (placeholder.length > 0) {

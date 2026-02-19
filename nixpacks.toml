@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["nodejs-18_x", "python3", "gcc"]
+
+[phases.install]
+cmds = [
+    "npm ci --only=production",
+    "cd client && npm install && npm run build && cd .."
+]
+
+[phases.build]
+cmds = ["echo 'Build complete'"]
+
+[start]
+cmd = "node server.js"
