@@ -1,35 +1,33 @@
-# Multi-stage build for production deployment
-FROM node:18-alpine AS frontend-build
+# Use Node 18 Alpine for smaller image size
+FROM node:18-alpine
 
-# Build frontend
+# Set working directory
+WORKDIR /app
+
+# Copy root package files
+COPY package*.json ./
+
+# Install backend dependencies
+RUN npm install
+
+# Copy backend source code
+COPY . .
+
+# Install client dependencies and build
 WORKDIR /app/client
 COPY client/package*.json ./
-RUN npm ci
+RUN npm install
 COPY client/ ./
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine
-
+# Go back to app root
 WORKDIR /app
 
-# Copy backend package files
-COPY package*.json ./
-RUN npm ci --only=production
-
-# Copy backend source
-COPY . .
-
-# Copy built frontend from build stage
-COPY --from=frontend-build /app/client/dist ./client/dist
-
-# Expose port (use PORT env var for flexibility)
+# Expose port
 EXPOSE 5000
-ENV PORT=5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+# Set environment variable for port
+ENV PORT=5000
 
 # Start the application
 CMD ["npm", "start"]
