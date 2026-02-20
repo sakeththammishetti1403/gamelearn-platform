@@ -1,13 +1,13 @@
 # Railway-optimized Dockerfile
-FROM node:18-slim
+FROM node:20-slim
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install dependencies (use npm install instead of ci to regenerate lock file)
+RUN npm install --production && npm cache clean --force
 
 # Copy backend source
 COPY config ./config
@@ -23,7 +23,7 @@ COPY seedCareer.js seeder.js server.js ./
 # Build frontend
 WORKDIR /app/client
 COPY client/package*.json ./
-RUN npm ci && npm cache clean --force
+RUN npm install && npm cache clean --force
 COPY client/ ./
 RUN npm run build
 
