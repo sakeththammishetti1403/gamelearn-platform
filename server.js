@@ -118,16 +118,16 @@ app.use(errorHandler);
 
 const path = require('path');
 
-// 9. Serve Frontend (Monolithic Deployment)
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/dist')));
-
-// Health Check
+// Health Check - MUST be before static files
 app.get('/health', (req, res) => res.status(200).json({
     status: 'active',
     services: ['api', 'sockets'],
     timestamp: new Date()
 }));
+
+// 9. Serve Frontend (Monolithic Deployment)
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
