@@ -108,8 +108,9 @@ app.use((req, res) => {
 });
 
 // 10. Start Unified Server with Port Collision Handling
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Unified Server + Multiplayer Arena running on port ${PORT}`);
+    console.log(`✅ Server is ready to accept connections`);
 }).on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
         console.error(`❌ FATAL ERROR: Port ${PORT} is already in use.`);
