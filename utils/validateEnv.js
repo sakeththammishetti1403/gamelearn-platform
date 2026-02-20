@@ -1,4 +1,4 @@
-// Simple environment variable validation
+// Minimal environment variable validation
 const requiredEnvVars = [
     'MONGO_URI',
     'JWT_SECRET'
@@ -21,8 +21,10 @@ function validateEnv() {
     }
 
     console.log('✅ Environment variables validated');
-    console.log(`   MongoDB: ${process.env.MONGO_URI ? 'Connected' : 'Not configured'}`);
-    console.log(`   JWT: ${process.env.JWT_SECRET ? 'Configured' : 'Not configured'}`);
+    console.log(`   MongoDB: ${process.env.MONGO_URI ? '✓' : '✗'}`);
+    console.log(`   JWT: ${process.env.JWT_SECRET ? '✓' : '✗'}`);
+    console.log(`   Frontend URL: ${process.env.FRONTEND_URL || 'Not set (will use default)'}`);
+    console.log(`   Backend URL: ${process.env.BACKEND_URL || 'Not set (will use default)'}`);
 }
 
 module.exports = validateEnv;
