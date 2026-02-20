@@ -93,7 +93,7 @@ The system is designed with **clean separation of concerns**, **stateless APIs**
 
 ## 🧠 SYSTEM DESIGN (DETAILED)
 
-### 1️⃣ High-Level Design (HLD)
+### High-Level Design (HLD)
 
 GameLearn follows a **client-server architecture** with real-time communication.
 
@@ -105,26 +105,7 @@ GameLearn follows a **client-server architecture** with real-time communication.
 - **Deployment**: Docker + Render
 
 ---
-
-### 2️⃣ Architecture Diagram
-
-```mermaid
-flowchart TD
-    User[User Browser / Mobile PWA]
-
-    User -->|HTTP| Frontend[React PWA]
-    Frontend -->|REST API| Backend[Node.js + Express]
-
-    Backend --> DB[(MongoDB)]
-    Backend --> Auth[JWT / OAuth]
-    Backend --> Cache[(Redis - Planned)]
-
-    Backend --> Socket[Socket.IO Server]
-    Socket --> Multiplayer[Multiplayer Game Engine]
-    Socket --> Chat[Real-time Chat]
-
-    Backend --> Analytics[Progress & Leaderboards]
-3️⃣ Component Breakdown
+Component Breakdown
 🖥 Frontend (React PWA)
 
 Authentication & role-based UI
@@ -171,14 +152,14 @@ Achievements & points
 
 Career tracks
 
-4️⃣ Scalability Design
+Scalability Design
 Layer	Strategy
 Frontend	CDN + PWA caching
 Backend	Stateless APIs
 Database	Indexed queries
 Real-time	Horizontal Socket.IO scaling
 Cache	Redis (planned)
-5️⃣ Security Design
+Security Design
 
 JWT authentication
 
@@ -331,3 +312,21 @@ Saketh Thammishetti
 📧 thammishettisaketh104@gmail.com
 
 🔗 https://github.com/sakeththammishetti1403
+Architecture Diagram
+
+```mermaid
+flowchart TD
+    User[User Browser / Mobile PWA]
+
+    User -->|HTTP| Frontend[React PWA]
+    Frontend -->|REST API| Backend[Node.js + Express]
+
+    Backend --> DB[(MongoDB)]
+    Backend --> Auth[JWT / OAuth]
+    Backend --> Cache[(Redis - Planned)]
+
+    Backend --> Socket[Socket.IO Server]
+    Socket --> Multiplayer[Multiplayer Game Engine]
+    Socket --> Chat[Real-time Chat]
+
+    Backend --> Analytics[Progress & Leaderboards]
