@@ -115,6 +115,12 @@ app.use('/api/reward', require('./routes/reward'));
 
 const path = require('path');
 
+// Simple ping endpoint for Railway healthcheck
+app.get('/ping', (req, res) => {
+    console.log('🏓 Ping received');
+    res.send('pong');
+});
+
 // Health Check - MUST be before static files
 app.get('/health', (req, res) => {
     console.log('✅ Health check requested');
@@ -182,11 +188,19 @@ app.use(errorHandler);
 
 // 10. Start Unified Server with Port Collision Handling
 console.log(`🚀 Starting server on port ${PORT}...`);
+console.log(`🔌 Binding to 0.0.0.0:${PORT}`);
+
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server successfully started!`);
     console.log(`🚀 Unified Server + Multiplayer Arena running on port ${PORT}`);
-    console.log(`🌐 Server is ready to accept connections`);
+    console.log(`� Server is ready to accept connections`);
     console.log(`📍 Health check available at: http://0.0.0.0:${PORT}/health`);
+    console.log(`📍 Ping endpoint available at: http://0.0.0.0:${PORT}/ping`);
+    console.log(`📍 Test endpoint available at: http://0.0.0.0:${PORT}/test`);
+    
+    // Log server address info
+    const address = server.address();
+    console.log(`📡 Server address info:`, JSON.stringify(address));
 }).on('error', (err) => {
     console.error('❌ Server failed to start!');
     if (err.code === 'EADDRINUSE') {

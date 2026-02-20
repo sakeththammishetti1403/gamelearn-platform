@@ -1,16 +1,15 @@
-# Simple, reliable Dockerfile for Railway
-FROM node:18
+# Railway-optimized Dockerfile
+FROM node:18-slim
 
-# Set working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install backend dependencies
-RUN npm install
+# Install dependencies
+RUN npm ci --only=production && npm cache clean --force
 
-# Copy backend code (excluding client for now)
+# Copy backend source
 COPY config ./config
 COPY engine ./engine
 COPY middleware ./middleware
@@ -19,25 +18,19 @@ COPY routes ./routes
 COPY socket ./socket
 COPY utils ./utils
 COPY services ./services
-COPY seedCareer.js ./
-COPY seeder.js ./
-COPY server.js ./
+COPY seedCareer.js seeder.js server.js ./
 
 # Build frontend
-WORKDIR /usr/src/app/client
+WORKDIR /app/client
 COPY client/package*.json ./
-RUN npm install
+RUN npm ci && npm cache clean --force
 COPY client/ ./
 RUN npm run build
 
-# Verify build output
-RUN ls -la /usr/src/app/client/dist || echo "dist folder not found!"
+# Back to app root
+WORKDIR /app
 
-# Back to root
-WORKDIR /usr/src/app
-
-# Expose port (Railway uses PORT env var, but we expose common port)
+# Railway will set PORT automatically
 EXPOSE 8080
 
-# Start app
 CMD ["node", "server.js"]
