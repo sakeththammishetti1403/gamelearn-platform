@@ -42,10 +42,12 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
 // 3. Global Middleware
-app.use(helmet({
-    contentSecurityPolicy: false, // Disable CSP for now to avoid blocking issues
-    crossOriginEmbedderPolicy: false
-})); // Security headers
+// Temporarily disable helmet to fix CSP blocking issue
+// app.use(helmet({
+//     contentSecurityPolicy: false,
+//     crossOriginEmbedderPolicy: false
+// }));
+
 app.use(cors({
     origin: [
         'http://localhost:3000',
