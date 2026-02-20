@@ -50,6 +50,7 @@ app.use(cors({
         'http://localhost:5173',
         'https://leveluped.vercel.app',
         'https://leveluped-app-production-94a3.up.railway.app',
+        'https://gamelearn-platform-2.onrender.com',
         process.env.FRONTEND_URL
     ].filter(Boolean),
     credentials: true
@@ -98,6 +99,7 @@ const io = new Server(server, {
             'http://localhost:5173',
             'https://leveluped.vercel.app',
             'https://leveluped-app-production-94a3.up.railway.app',
+            'https://gamelearn-platform-2.onrender.com',
             process.env.FRONTEND_URL
         ].filter(Boolean),
         credentials: true
