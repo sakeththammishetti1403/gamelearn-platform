@@ -56,6 +56,17 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// CRITICAL: Health check FIRST - before any other setup
+app.get('/health', (req, res) => {
+    console.log('✅ Health check requested');
+    res.status(200).send('OK');
+});
+
+app.get('/ping', (req, res) => {
+    console.log('🏓 Ping received');
+    res.status(200).send('pong');
+});
+
 // Initialize Passport
 const passport = require('passport');
 app.use(passport.initialize());
@@ -68,8 +79,8 @@ mongoose
     .then(() => console.log("✅ MongoDB connected successfully"))
     .catch((err) => {
         console.error("❌ MongoDB connection error:", err.message);
-        console.error("Full error:", err);
-        process.exit(1);
+        console.error("⚠️ Server will continue without MongoDB");
+        // Don't exit - let server start anyway for healthcheck
     });
 
 // 5. Attach Socket.IO to SAME server
@@ -114,24 +125,6 @@ app.use('/api/leaderboard', require('./routes/leaderboard'));
 app.use('/api/reward', require('./routes/reward'));
 
 const path = require('path');
-
-// Simple ping endpoint for Railway healthcheck
-app.get('/ping', (req, res) => {
-    console.log('🏓 Ping received');
-    res.send('pong');
-});
-
-// Health Check - MUST be before static files
-app.get('/health', (req, res) => {
-    console.log('✅ Health check requested');
-    res.status(200).json({
-        status: 'active',
-        services: ['api', 'sockets'],
-        timestamp: new Date(),
-        port: PORT,
-        env: process.env.NODE_ENV
-    });
-});
 
 // Simple test endpoint
 app.get('/test', (req, res) => {

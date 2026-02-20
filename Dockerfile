@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies (use npm install instead of ci to regenerate lock file)
-RUN npm install --production && npm cache clean --force
+# Install dependencies
+RUN npm install && npm cache clean --force
 
 # Copy backend source
 COPY config ./config
