@@ -159,12 +159,8 @@ console.log('📁 Setting up static file serving from:', path.join(__dirname, 'c
 app.use(express.static(path.join(__dirname, 'client/dist')));
 
 // The "catchall" handler: for any request that doesn't match API routes
-app.get('*', (req, res) => {
-    // Skip API routes and socket.io
-    if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io')) {
-        return res.status(404).json({ error: 'Not found' });
-    }
-    
+// Express 5 compatible - use regex instead of *
+app.get(/^\/(?!api|socket\.io).*/, (req, res) => {
     console.log('🔄 Catch-all route hit for:', req.path);
     res.sendFile(path.join(__dirname, 'client/dist/index.html'));
 });
