@@ -113,9 +113,6 @@ app.use('/api/support', require('./routes/support'));
 app.use('/api/leaderboard', require('./routes/leaderboard'));
 app.use('/api/reward', require('./routes/reward'));
 
-// 8. Error Handling Middleware (Must be last)
-app.use(errorHandler);
-
 const path = require('path');
 
 // Health Check - MUST be before static files
@@ -124,8 +121,16 @@ app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'active',
         services: ['api', 'sockets'],
-        timestamp: new Date()
+        timestamp: new Date(),
+        port: PORT,
+        env: process.env.NODE_ENV
     });
+});
+
+// Simple test endpoint
+app.get('/test', (req, res) => {
+    console.log('🧪 Test endpoint hit');
+    res.send('Server is working! Port: ' + PORT);
 });
 
 // 9. Serve Frontend (Monolithic Deployment)
@@ -171,6 +176,9 @@ app.use((req, res, next) => {
         res.status(404).send('Frontend not found. Please check deployment.');
     }
 });
+
+// 8. Error Handling Middleware (Must be ABSOLUTE LAST)
+app.use(errorHandler);
 
 // 10. Start Unified Server with Port Collision Handling
 console.log(`🚀 Starting server on port ${PORT}...`);
