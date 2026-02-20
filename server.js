@@ -119,11 +119,14 @@ app.use(errorHandler);
 const path = require('path');
 
 // Health Check - MUST be before static files
-app.get('/health', (req, res) => res.status(200).json({
-    status: 'active',
-    services: ['api', 'sockets'],
-    timestamp: new Date()
-}));
+app.get('/health', (req, res) => {
+    console.log('Health check requested');
+    res.status(200).json({
+        status: 'active',
+        services: ['api', 'sockets'],
+        timestamp: new Date()
+    });
+});
 
 // 9. Serve Frontend (Monolithic Deployment)
 // Serve static files from the React app
@@ -131,8 +134,19 @@ app.use(express.static(path.join(__dirname, 'client/dist')));
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
-app.use((req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+app.get('*', (req, res) => {
+    console.log('Catch-all route hit for:', req.path);
+    const indexPath = path.resolve(__dirname, 'client', 'dist', 'index.html');
+    console.log('Attempting to serve:', indexPath);
+    
+    // Check if file exists
+    const fs = require('fs');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        console.error('index.html not found at:', indexPath);
+        res.status(404).send('Frontend not found. Please check deployment.');
+    }
 });
 
 // 10. Start Unified Server with Port Collision Handling
