@@ -42,7 +42,10 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
 // 3. Global Middleware
-app.use(helmet()); // Security headers
+app.use(helmet({
+    contentSecurityPolicy: false, // Disable CSP for now to avoid blocking issues
+    crossOriginEmbedderPolicy: false
+})); // Security headers
 app.use(cors({
     origin: [
         'http://localhost:3000',
@@ -56,6 +59,12 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+
+// Request logging middleware
+app.use((req, res, next) => {
+    console.log(`📥 ${req.method} ${req.path}`);
+    next();
+});
 
 // CRITICAL: Health check FIRST - before any other setup
 app.get('/health', (req, res) => {
