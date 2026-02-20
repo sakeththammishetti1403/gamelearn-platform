@@ -26,8 +26,10 @@ app.use(cors({
         'http://localhost:3000',
         'http://localhost:3001',
         'http://localhost:5173',
-        'https://leveluped.vercel.app'
-    ],
+        'https://leveluped.vercel.app',
+        'https://leveluped-app-production-94a3.up.railway.app',
+        process.env.FRONTEND_URL
+    ].filter(Boolean),
     credentials: true
 }));
 app.use(express.json());
@@ -53,8 +55,10 @@ const io = new Server(server, {
             'http://localhost:3000',
             'http://localhost:3001',
             'http://localhost:5173',
-            'https://leveluped.vercel.app'
-        ],
+            'https://leveluped.vercel.app',
+            'https://leveluped-app-production-94a3.up.railway.app',
+            process.env.FRONTEND_URL
+        ].filter(Boolean),
         credentials: true
     }
 });
