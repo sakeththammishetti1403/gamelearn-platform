@@ -36,8 +36,8 @@ RUN ls -la /usr/src/app/client/dist || echo "dist folder not found!"
 # Back to root
 WORKDIR /usr/src/app
 
-# Expose port
-EXPOSE 5000
+# Expose port (Railway uses PORT env var, but we expose common port)
+EXPOSE 8080
 
 # Start app
 CMD ["node", "server.js"]
