@@ -73,9 +73,7 @@ export default defineConfig({
         }
     },
     define: {
-        // Use VITE_API_URL from environment, fallback to localhost for development
-        'import.meta.env.VITE_API_URL': JSON.stringify(
-            process.env.VITE_API_URL || 'http://localhost:5000/api'
-        )
+        // Don't hardcode API URL - let it be determined at runtime
+        'import.meta.env.VITE_API_URL': JSON.stringify(undefined)
     }
 })
