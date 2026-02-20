@@ -134,7 +134,7 @@ app.use(express.static(path.join(__dirname, 'client/dist')));
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
-app.get('*', (req, res) => {
+app.use((req, res) => {
     console.log('Catch-all route hit for:', req.path);
     const indexPath = path.resolve(__dirname, 'client', 'dist', 'index.html');
     console.log('Attempting to serve:', indexPath);
