@@ -1,78 +1,333 @@
-# LevelUpED - Learn by Unlocking Levels
+# 🎮 GameLearn Platform
+**Learn Smarter by Playing Together**
 
-LevelUpED is a production-grade, game-based edtech platform designed to make learning immersive and competitive. Students unlock new learning levels by completing modules, succeeding in interactive games, and competing in the Multiplayer Arena.
-
-## 🚀 Vision
-LevelUpED competes with world-class edtech platforms by integrating real-time feedback, gamified progression, and AI-powered support.
-
-## 🔗 Production Links
-- **Frontend**: [leveluped.vercel.app](https://leveluped.vercel.app)
-- **Backend API**: [api.leveluped.onrender.com](https://api.leveluped.onrender.com)
-
-## 🏗️ Architecture
-- **Frontend**: React (Vite), Axios, Socket.IO Client, Framer Motion.
-- **Backend**: Node.js, Express, MongoDB (Mongoose), Socket.IO.
-- **Real-time**: WebSockets for Multiplayer Arena and Live Chat.
-- **Email**: Nodemailer for student support.
-- **Security**: JWT-based Authentication, Bcrypt hashing, Helmet protection.
-
-## 🛠️ Getting Started
-
-### Prerequisites
-- Node.js (v18+)
-- MongoDB (Local or Atlas)
-- Redis (Optional, for caching)
-
-### Installation
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   cd client && npm install
-   ```
-3. Set up environment variables:
-   - Copy `.env.example` to `.env`
-   - Update `MONGO_URI` with your MongoDB connection string
-   - Set a strong `JWT_SECRET` and `SESSION_SECRET`
-   - Configure `FRONTEND_URL` (default: http://localhost:5173)
-   - Configure `BACKEND_URL` (default: http://localhost:5000/api)
-   - For OAuth setup, see [OAUTH_SETUP.md](OAUTH_SETUP.md)
-
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
-## 🔐 Authentication
-
-LevelUpED supports both local authentication (email/password) and OAuth providers.
-
-### Local Authentication
-Works out of the box - just register with email and password.
-
-### OAuth Providers
-- Google OAuth
-- GitHub OAuth
-- LinkedIn OAuth
-
-To enable OAuth, follow the detailed setup guide in [OAUTH_SETUP.md](OAUTH_SETUP.md).
-
-### Testing Authentication
-See [AUTH_TESTING.md](AUTH_TESTING.md) for comprehensive testing instructions.
-
-### Recent Authentication Fixes
-All authentication issues have been resolved:
-- ✅ Local email/password login works correctly
-- ✅ OAuth configuration is properly documented
-- ✅ Improved error handling and user feedback
-- ✅ Security best practices implemented
-
-For details, see [AUTH_FIXES_SUMMARY.md](AUTH_FIXES_SUMMARY.md).
-
-## 📜 Role-based Features
-- **Student**: Learning paths, statistics, games, roadmap, and multiplayer arena.
-- **Instructor**: Content creation, module management, and subject oversight.
-- **Admin**: User management and platform analytics.
+GameLearn is a **gamified, real-time learning platform** that combines education with multiplayer games, live collaboration, and personalized learning paths.  
+It is built as a **production-ready, scalable MERN stack application** following modern system design principles.
 
 ---
-© 2026 LevelUpED. All rights reserved.
+
+## 📌 Table of Contents
+- Overview
+- Problem Statement
+- Solution
+- Features
+- System Design (Detailed)
+- Architecture Diagram
+- Tech Stack
+- Live Demo
+- Installation
+- Project Structure
+- API Overview
+- Deployment
+- Testing
+- Currently Working On (TODO)
+- Key Achievements
+- Challenges & Learnings
+- Contributing
+- License
+- Author
+
+---
+
+## 🧠 Overview
+
+Traditional learning platforms often fail due to:
+- Low engagement
+- Passive learning
+- No collaboration
+- One-size-fits-all learning paths
+
+**GameLearn Platform** solves this by introducing:
+- Gamification
+- Real-time multiplayer learning
+- Career-driven personalization
+- Analytics-driven progress tracking
+
+---
+
+## ❓ Problem Statement
+
+How can we design a learning platform that:
+- Keeps users engaged consistently
+- Encourages peer learning
+- Scales to thousands of users
+- Supports real-time interaction
+- Is production-ready and deployable
+
+---
+
+## 💡 Solution
+
+GameLearn integrates:
+- 🎮 Gamified learning modules
+- 🧑‍🤝‍🧑 Real-time multiplayer & chat
+- 📊 Analytics & leaderboards
+- 🎯 Personalized career guidance
+
+The system is designed with **clean separation of concerns**, **stateless APIs**, and **real-time event-driven communication**.
+
+---
+
+## 🌟 Features
+
+### 👨‍🎓 Students
+- Interactive learning modules
+- Points, badges, achievements
+- Global & subject-wise leaderboards
+- Real-time multiplayer games
+- Career hub with learning tracks
+- Chat with peers
+- PWA (offline support)
+
+### 👩‍🏫 Instructors
+- Content creation & management
+- Student performance analytics
+- Rich content editor
+
+### 🛠 Admins
+- User & role management
+- Platform analytics
+- Content moderation
+
+---
+
+## 🧠 SYSTEM DESIGN (DETAILED)
+
+### 1️⃣ High-Level Design (HLD)
+
+GameLearn follows a **client-server architecture** with real-time communication.
+
+- **Frontend**: React PWA
+- **Backend**: Node.js + Express
+- **Database**: MongoDB
+- **Real-time Layer**: Socket.IO
+- **Auth**: JWT + OAuth
+- **Deployment**: Docker + Render
+
+---
+
+### 2️⃣ Architecture Diagram
+
+```mermaid
+flowchart TD
+    User[User Browser / Mobile PWA]
+
+    User -->|HTTP| Frontend[React PWA]
+    Frontend -->|REST API| Backend[Node.js + Express]
+
+    Backend --> DB[(MongoDB)]
+    Backend --> Auth[JWT / OAuth]
+    Backend --> Cache[(Redis - Planned)]
+
+    Backend --> Socket[Socket.IO Server]
+    Socket --> Multiplayer[Multiplayer Game Engine]
+    Socket --> Chat[Real-time Chat]
+
+    Backend --> Analytics[Progress & Leaderboards]
+3️⃣ Component Breakdown
+🖥 Frontend (React PWA)
+
+Authentication & role-based UI
+
+Learning modules & games
+
+Leaderboards & analytics
+
+WebSocket client for real-time events
+
+Offline caching (PWA)
+
+⚙ Backend (Node + Express)
+
+REST APIs for learning, users, careers
+
+JWT-based authentication
+
+OAuth (Google, GitHub, LinkedIn)
+
+Role-based access control
+
+Business logic layer
+
+🔄 Real-Time Engine (Socket.IO)
+
+Multiplayer game sessions
+
+Live chat
+
+Real-time leaderboard updates
+
+Event-based communication
+
+🗄 Database (MongoDB)
+
+Users
+
+Subjects / Modules / Sections
+
+Progress tracking
+
+Achievements & points
+
+Career tracks
+
+4️⃣ Scalability Design
+Layer	Strategy
+Frontend	CDN + PWA caching
+Backend	Stateless APIs
+Database	Indexed queries
+Real-time	Horizontal Socket.IO scaling
+Cache	Redis (planned)
+5️⃣ Security Design
+
+JWT authentication
+
+OAuth providers
+
+Password hashing (bcrypt)
+
+Role-based authorization
+
+CORS & CSP handling
+
+🛠 Tech Stack
+Frontend
+
+React
+
+Vite
+
+Axios
+
+Socket.IO Client
+
+Recharts
+
+PWA
+
+Backend
+
+Node.js
+
+Express 5
+
+MongoDB + Mongoose
+
+Socket.IO
+
+JWT
+
+Passport.js
+
+bcryptjs
+
+DevOps
+
+Docker
+
+Docker Compose
+
+Render.com
+
+MongoDB Atlas
+
+🚀 Live Demo
+
+🔗 https://gamelearn-platform-2.onrender.com
+
+📦 Installation
+git clone https://github.com/sakeththammishetti1403/gamelearn-platform.git
+cd gamelearn-platform
+
+npm install
+cd client
+npm install
+cd ..
+
+npm run dev
+📁 Project Structure
+gamelearn-platform/
+├── client/         # React frontend
+├── config/         # OAuth config
+├── engine/         # Game logic
+├── middleware/
+├── models/
+├── routes/
+├── socket/
+├── services/
+├── utils/
+├── server.js
+├── Dockerfile
+└── docker-compose.yml
+🧪 Testing
+npm test
+cd client && npm test
+🚧 Currently Working On (TODO)
+
+Redis caching
+
+AI-based adaptive difficulty
+
+Recommendation engine
+
+Seasonal tournaments
+
+Advanced admin analytics
+
+RBAC hardening
+
+🎯 Key Achievements
+
+Full-stack MERN application
+
+Real-time multiplayer system
+
+Gamification engine
+
+Career recommendation system
+
+PWA with offline support
+
+Dockerized deployment
+
+OAuth authentication
+
+🧗 Challenges & Learnings
+Challenges
+
+Real-time state management
+
+WebSocket scaling
+
+Production deployment issues
+
+Learnings
+
+Event-driven architecture
+
+System scalability
+
+Clean backend design
+
+DevOps fundamentals
+
+🤝 Contributing
+
+Fork repo
+
+Create feature branch
+
+Commit changes
+
+Open Pull Request
+
+📝 License
+
+ISC License
+
+👤 Author
+
+Saketh Thammishetti
+📧 thammishettisaketh104@gmail.com
+
+🔗 https://github.com/sakeththammishetti1403
