@@ -10,9 +10,31 @@ const errorHandler = require('./middleware/errorMiddleware');
 // 1. Load Env
 dotenv.config();
 
+// Global error handlers
+process.on('uncaughtException', (error) => {
+    console.error('❌ UNCAUGHT EXCEPTION:', error.message);
+    console.error('Stack:', error.stack);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ UNHANDLED REJECTION at:', promise);
+    console.error('Reason:', reason);
+    process.exit(1);
+});
+
+console.log('🔧 Starting server initialization...');
+console.log('� Environment:', process.env.NODE_ENV || 'development');
+console.log('🔌 Port:', process.env.PORT || 5000);
+
 // 2. Validate Environment Variables
 const validateEnv = require('./utils/validateEnv');
-validateEnv();
+try {
+    validateEnv();
+} catch (error) {
+    console.error('❌ Environment validation failed:', error.message);
+    process.exit(1);
+}
 
 // 2. Setup Express & HTTP Server
 const app = express();
@@ -40,11 +62,13 @@ app.use(passport.initialize());
 require('./config/passport')(passport);
 
 // 4. Database Connection
+console.log('🔄 Connecting to MongoDB...');
 mongoose
     .connect(process.env.MONGO_URI)
     .then(() => console.log("✅ MongoDB connected successfully"))
     .catch((err) => {
-        console.error("❌ MongoDB connection error:", err);
+        console.error("❌ MongoDB connection error:", err.message);
+        console.error("Full error:", err);
         process.exit(1);
     });
 
@@ -112,15 +136,20 @@ app.use((req, res) => {
 });
 
 // 10. Start Unified Server with Port Collision Handling
+console.log(`🚀 Starting server on port ${PORT}...`);
 server.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Server successfully started!`);
     console.log(`🚀 Unified Server + Multiplayer Arena running on port ${PORT}`);
-    console.log(`✅ Server is ready to accept connections`);
+    console.log(`🌐 Server is ready to accept connections`);
+    console.log(`📍 Health check available at: http://0.0.0.0:${PORT}/health`);
 }).on('error', (err) => {
+    console.error('❌ Server failed to start!');
     if (err.code === 'EADDRINUSE') {
         console.error(`❌ FATAL ERROR: Port ${PORT} is already in use.`);
         console.error(`💡 SOLUTION: Check for duplicate processes or run 'npm run kill-server' (if available).`);
     } else {
-        console.error("❌ server failed to start:", err);
+        console.error("❌ Server error:", err.message);
+        console.error("Full error:", err);
     }
     process.exit(1);
 });
