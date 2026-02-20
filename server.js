@@ -120,7 +120,7 @@ const path = require('path');
 
 // Health Check - MUST be before static files
 app.get('/health', (req, res) => {
-    console.log('Health check requested');
+    console.log('✅ Health check requested');
     res.status(200).json({
         status: 'active',
         services: ['api', 'sockets'],
@@ -129,22 +129,45 @@ app.get('/health', (req, res) => {
 });
 
 // 9. Serve Frontend (Monolithic Deployment)
+console.log('📁 Setting up static file serving from:', path.join(__dirname, 'client/dist'));
+
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/dist')));
+app.use(express.static(path.join(__dirname, 'client/dist'), {
+    maxAge: '1d',
+    etag: true
+}));
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
-app.use((req, res) => {
-    console.log('Catch-all route hit for:', req.path);
+app.use((req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api/')) {
+        return next();
+    }
+    
+    console.log('🔄 Catch-all route hit for:', req.path);
     const indexPath = path.resolve(__dirname, 'client', 'dist', 'index.html');
-    console.log('Attempting to serve:', indexPath);
+    console.log('📄 Attempting to serve index.html from:', indexPath);
     
     // Check if file exists
     const fs = require('fs');
     if (fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
+        console.log('✅ index.html found, serving...');
+        res.sendFile(indexPath, (err) => {
+            if (err) {
+                console.error('❌ Error sending file:', err);
+                res.status(500).send('Error loading application');
+            }
+        });
     } else {
-        console.error('index.html not found at:', indexPath);
+        console.error('❌ index.html not found at:', indexPath);
+        console.log('📂 Checking what files exist in client/dist:');
+        try {
+            const files = fs.readdirSync(path.join(__dirname, 'client', 'dist'));
+            console.log('Files in dist:', files);
+        } catch (e) {
+            console.error('Cannot read dist directory:', e.message);
+        }
         res.status(404).send('Frontend not found. Please check deployment.');
     }
 });
