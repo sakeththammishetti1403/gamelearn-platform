@@ -67,10 +67,16 @@ app.get('/ping', (req, res) => {
     res.status(200).send('pong');
 });
 
-// Initialize Passport
-const passport = require('passport');
-app.use(passport.initialize());
-require('./config/passport')(passport);
+// Initialize Passport with error handling
+try {
+    const passport = require('passport');
+    app.use(passport.initialize());
+    require('./config/passport')(passport);
+    console.log('✅ Passport initialized');
+} catch (err) {
+    console.error('⚠️ Passport initialization failed:', err.message);
+    console.error('Server will continue without OAuth');
+}
 
 // 4. Database Connection
 console.log('🔄 Connecting to MongoDB...');
@@ -99,12 +105,22 @@ const io = new Server(server, {
 });
 
 // 6. Multiplayer Arena Logic (Delegated for Production-Grade Gameplay)
-const socketHandler = require('./socket/gameHandler');
-socketHandler(io);
+try {
+    const socketHandler = require('./socket/gameHandler');
+    socketHandler(io);
+    console.log('✅ Game handler initialized');
+} catch (err) {
+    console.error('⚠️ Game handler failed:', err.message);
+}
 
 // 6b. Real-time Chat Logic
-const chatHandler = require('./socket/chatHandler');
-chatHandler(io);
+try {
+    const chatHandler = require('./socket/chatHandler');
+    chatHandler(io);
+    console.log('✅ Chat handler initialized');
+} catch (err) {
+    console.error('⚠️ Chat handler failed:', err.message);
+}
 
 // 7. Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -114,7 +130,11 @@ app.use('/api/learning', require('./routes/learning'));
 // Auto-seed Career Tracks
 const seedCareerTracks = require('./seedCareer');
 mongoose.connection.once('open', () => {
-    seedCareerTracks();
+    try {
+        seedCareerTracks();
+    } catch (err) {
+        console.error('⚠️ Career seeding failed:', err.message);
+    }
 });
 
 app.use('/api/game', require('./routes/game'));
