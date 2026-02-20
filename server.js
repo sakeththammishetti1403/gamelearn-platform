@@ -143,44 +143,17 @@ app.get('/test', (req, res) => {
 console.log('📁 Setting up static file serving from:', path.join(__dirname, 'client/dist'));
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/dist'), {
-    maxAge: '1d',
-    etag: true
-}));
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
-// The "catchall" handler: for any request that doesn't
-// match one above, send back React's index.html file.
-app.use((req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api/')) {
-        return next();
+// The "catchall" handler: for any request that doesn't match API routes
+app.get('*', (req, res) => {
+    // Skip API routes and socket.io
+    if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io')) {
+        return res.status(404).json({ error: 'Not found' });
     }
     
     console.log('🔄 Catch-all route hit for:', req.path);
-    const indexPath = path.resolve(__dirname, 'client', 'dist', 'index.html');
-    console.log('📄 Attempting to serve index.html from:', indexPath);
-    
-    // Check if file exists
-    const fs = require('fs');
-    if (fs.existsSync(indexPath)) {
-        console.log('✅ index.html found, serving...');
-        res.sendFile(indexPath, (err) => {
-            if (err) {
-                console.error('❌ Error sending file:', err);
-                res.status(500).send('Error loading application');
-            }
-        });
-    } else {
-        console.error('❌ index.html not found at:', indexPath);
-        console.log('📂 Checking what files exist in client/dist:');
-        try {
-            const files = fs.readdirSync(path.join(__dirname, 'client', 'dist'));
-            console.log('Files in dist:', files);
-        } catch (e) {
-            console.error('Cannot read dist directory:', e.message);
-        }
-        res.status(404).send('Frontend not found. Please check deployment.');
-    }
+    res.sendFile(path.join(__dirname, 'client/dist/index.html'));
 });
 
 // 8. Error Handling Middleware (Must be ABSOLUTE LAST)
