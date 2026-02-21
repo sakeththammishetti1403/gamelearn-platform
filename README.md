@@ -110,7 +110,7 @@ Career hub with learning tracks
 
 Chat with peers
 
-PWA (offline support)
+Progressive Web App (offline support)
 
 👩‍🏫 Instructors
 
@@ -133,7 +133,7 @@ Content moderation
 
 GameLearn follows a client–server architecture with real-time communication.
 
-Frontend: React PWA
+Frontend: React Progressive Web App
 
 Backend: Node.js + Express
 
@@ -144,11 +144,22 @@ Real-time Layer: Socket.IO
 Authentication: JWT + OAuth
 
 Deployment: Docker + Render
-
 🏗 Architecture Diagram
+flowchart TD
+    User[User Browser or Mobile PWA]
 
-✅ This diagram renders correctly on GitHub
+    User --> Frontend[React PWA]
+    Frontend --> Backend[Node.js and Express API]
 
+    Backend --> Database[(MongoDB)]
+    Backend --> Auth[JWT and OAuth]
+    Backend --> Cache[Redis - Planned]
+
+    Backend --> Socket[Socket.IO Server]
+    Socket --> Multiplayer[Multiplayer Game Engine]
+    Socket --> Chat[Real-time Chat]
+
+    Backend --> Analytics[Progress and Leaderboards]
 3️⃣ Component Breakdown
 Frontend (React PWA)
 
@@ -164,7 +175,7 @@ Offline caching using PWA
 
 Backend (Node.js + Express)
 
-REST APIs for users, learning, careers
+REST APIs for users, learning, and careers
 
 JWT-based authentication
 
@@ -188,7 +199,7 @@ Database (MongoDB)
 
 Users
 
-Subjects, modules, sections
+Subjects, modules, and sections
 
 Progress tracking
 
@@ -228,7 +239,7 @@ Socket.IO Client
 
 Recharts
 
-PWA
+Progressive Web App
 
 Backend
 
@@ -270,6 +281,7 @@ npm install
 cd ..
 
 npm run dev
+
 📁 Project Structure
 gamelearn-platform/
 ├── client/
@@ -284,9 +296,11 @@ gamelearn-platform/
 ├── server.js
 ├── Dockerfile
 └── docker-compose.yml
-🧪 Testing
+
+Testing
 npm test
 cd client && npm test
+
 🚧 Currently Working On (TODO)
 
 Redis caching
