@@ -34,7 +34,6 @@ A production-ready full-stack MERN application that transforms education through
 
 ### Student Dashboard
 ![Student Dashboard](<img width="1905" height="888" alt="Screenshot 2026-02-21 122141" src="https://github.com/user-attachments/assets/f016314e-4feb-421b-8c50-e42db3e35f4d" />)
-<img width="1870" height="868" alt="image" src="https://github.com/user-attachments/assets/539bf042-158f-444f-8fa8-b1f957e1d4f0" />
 
 
 *Main dashboard showing learning metrics: modules finished, learning streak, knowledge points, and study hours. Features quick access to multiplayer arena and current curriculum.*
