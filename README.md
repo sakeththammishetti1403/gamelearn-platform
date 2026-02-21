@@ -1,78 +1,190 @@
-# LevelUpED - Learn by Unlocking Levels
+# LevelUpED - Gamified Learning Platform
 
-LevelUpED is a production-grade, game-based edtech platform designed to make learning immersive and competitive. Students unlock new learning levels by completing modules, succeeding in interactive games, and competing in the Multiplayer Arena.
+A production-ready full-stack MERN application that transforms education through gamification, real-time multiplayer quizzes, and personalized learning paths.
 
-## 🚀 Vision
-LevelUpED competes with world-class edtech platforms by integrating real-time feedback, gamified progression, and AI-powered support.
+## Overview
 
-## 🔗 Production Links
-- **Frontend**: [leveluped.vercel.app](https://leveluped.vercel.app)
-- **Backend API**: [api.leveluped.onrender.com](https://api.leveluped.onrender.com)
+**Problem:** Traditional e-learning platforms lack engagement and fail to provide real-time collaborative experiences that keep students motivated.
 
-## 🏗️ Architecture
-- **Frontend**: React (Vite), Axios, Socket.IO Client, Framer Motion.
-- **Backend**: Node.js, Express, MongoDB (Mongoose), Socket.IO.
-- **Real-time**: WebSockets for Multiplayer Arena and Live Chat.
-- **Email**: Nodemailer for student support.
-- **Security**: JWT-based Authentication, Bcrypt hashing, Helmet protection.
+**Solution:** LevelUpED combines gamification mechanics (points, streaks, leaderboards) with real-time multiplayer quiz battles and career exploration tools. Built as a Progressive Web App with offline support, it delivers a native app experience while maintaining web accessibility.
 
-## 🛠️ Getting Started
+**Live Demo:** https://gamelearn-platform-2.onrender.com
+
+## Key Features
+
+### For Students
+- **Gamified Learning:** Earn knowledge points, maintain learning streaks, and track study hours
+- **Multiplayer Arena:** Real-time quiz battles with peers using Socket.IO
+- **Progress Dashboard:** Visual analytics showing modules completed, learning streaks, and performance metrics
+- **Career Exploration:** Personalized career track recommendations based on learning patterns
+- **Leaderboards:** Global and subject-specific rankings to drive healthy competition
+- **PWA Support:** Install as mobile app, works offline with service workers
+
+### For Instructors
+- **Content Management:** Create and organize subjects, modules, and sections
+- **Student Analytics:** Monitor individual and cohort progress
+- **Rich Content Editor:** Support for text, code snippets, images, and interactive elements
+
+### For Admins
+- **User Management:** Role-based access control (Student, Instructor, Admin)
+- **Platform Analytics:** System-wide usage statistics and engagement metrics
+- **Content Moderation:** Activate/deactivate learning materials
+
+## Application Screenshots
+
+### Student Dashboard
+![Student Dashboard](assets/dashboard.png)
+*Main dashboard showing learning metrics: modules finished, learning streak, knowledge points, and study hours. Features quick access to multiplayer arena and current curriculum.*
+
+### System Architecture Diagrams
+![High-Level Design](assets/hld.png)
+*High-level architecture showing React PWA frontend, Node.js backend with REST APIs and WebSocket support, MongoDB for persistence, and Redis for caching.*
+
+![Low-Level Design](assets/lld.png)
+*Service-oriented backend architecture with dedicated services for Auth, User, Learning, Career, Leaderboard, and Multiplayer features.*
+
+## System Design
+
+### High-Level Architecture
+
+```mermaid
+graph TB
+    User[User Browser / Mobile PWA]
+    React[React PWA]
+    Backend[Node.js + Express]
+    MongoDB[(MongoDB Atlas)]
+    Redis[(Redis Cache)]
+    SocketIO[Socket.IO Server]
+    
+    User -->|HTTPS| React
+    React -->|REST API| Backend
+    React -->|WebSocket| SocketIO
+    Backend --> MongoDB
+    Backend --> Redis
+    SocketIO --> Backend
+    Backend -->|JWT + OAuth| Auth[Google/GitHub/LinkedIn]
+```
+
+### Low-Level Design
+
+```mermaid
+graph TB
+    API[API Controllers]
+    
+    API --> AuthService
+    API --> UserService
+    API --> LearningService
+    API --> CareerService
+    API --> LeaderboardService
+    API --> MultiplayerService
+    
+    AuthService --> JWT[JWT Handler]
+    AuthService --> OAuth[OAuth Providers]
+    
+    UserService --> UserModel[(Users)]
+    
+    LearningService --> SubjectModel[(Subjects)]
+    LearningService --> ModuleModel[(Modules)]
+    LearningService --> SectionModel[(Sections)]
+    LearningService --> ProgressModel[(Progress)]
+    
+    CareerService --> CareerModel[(Career Tracks)]
+    
+    LeaderboardService --> RedisCache[(Redis Cache)]
+    LeaderboardService --> ScoreModel[(Scores)]
+    
+    MultiplayerService --> SocketIO[Socket.IO]
+    MultiplayerService --> GameEngine[Game Engine]
+```
+
+## Tech Stack
+
+**Frontend:**
+- React 18 with Vite
+- Socket.IO Client for real-time features
+- Recharts for analytics visualization
+- Workbox for PWA and offline support
+
+**Backend:**
+- Node.js 20 with Express 5
+- MongoDB with Mongoose ODM
+- Socket.IO for WebSocket communication
+- JWT + Passport.js (OAuth: Google, GitHub, LinkedIn)
+- Redis for leaderboard caching (optional)
+
+**DevOps:**
+- Docker for containerization
+- Render.com for hosting
+- MongoDB Atlas for database
+- GitHub Actions ready (CI/CD)
+
+## Local Setup
 
 ### Prerequisites
-- Node.js (v18+)
-- MongoDB (Local or Atlas)
-- Redis (Optional, for caching)
+- Node.js 20+
+- MongoDB (local or Atlas)
+- npm or yarn
 
 ### Installation
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   cd client && npm install
-   ```
-3. Set up environment variables:
-   - Copy `.env.example` to `.env`
-   - Update `MONGO_URI` with your MongoDB connection string
-   - Set a strong `JWT_SECRET` and `SESSION_SECRET`
-   - Configure `FRONTEND_URL` (default: http://localhost:5173)
-   - Configure `BACKEND_URL` (default: http://localhost:5000/api)
-   - For OAuth setup, see [OAUTH_SETUP.md](OAUTH_SETUP.md)
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
+```bash
+# Clone repository
+git clone https://github.com/sakeththammishetti1403/gamelearn-platform.git
+cd gamelearn-platform
 
-## 🔐 Authentication
+# Install backend dependencies
+npm install
 
-LevelUpED supports both local authentication (email/password) and OAuth providers.
+# Install frontend dependencies
+cd client && npm install && cd ..
 
-### Local Authentication
-Works out of the box - just register with email and password.
+# Configure environment
+cp .env.example .env
+# Edit .env with your MongoDB URI, JWT secrets
 
-### OAuth Providers
-- Google OAuth
-- GitHub OAuth
-- LinkedIn OAuth
+# Run development servers
+npm run dev
+```
 
-To enable OAuth, follow the detailed setup guide in [OAUTH_SETUP.md](OAUTH_SETUP.md).
+Access at `http://localhost:3000` (frontend) and `http://localhost:5000` (backend API)
 
-### Testing Authentication
-See [AUTH_TESTING.md](AUTH_TESTING.md) for comprehensive testing instructions.
+### Docker Deployment
 
-### Recent Authentication Fixes
-All authentication issues have been resolved:
-- ✅ Local email/password login works correctly
-- ✅ OAuth configuration is properly documented
-- ✅ Improved error handling and user feedback
-- ✅ Security best practices implemented
+```bash
+docker-compose up --build
+```
 
-For details, see [AUTH_FIXES_SUMMARY.md](AUTH_FIXES_SUMMARY.md).
+Access at `http://localhost:5000`
 
-## 📜 Role-based Features
-- **Student**: Learning paths, statistics, games, roadmap, and multiplayer arena.
-- **Instructor**: Content creation, module management, and subject oversight.
-- **Admin**: User management and platform analytics.
+## Scalability & Security
+
+**Scalability:**
+- Stateless JWT authentication enables horizontal scaling
+- Redis caching for leaderboard queries reduces DB load
+- Socket.IO with Redis adapter supports multi-instance deployments
+- MongoDB indexes on frequently queried fields (userId, subjectId)
+
+**Security:**
+- Passwords hashed with bcryptjs (10 rounds)
+- JWT tokens with 30-day expiration
+- CORS configured for specific origins
+- Input validation on all API endpoints
+- OAuth 2.0 for third-party authentication
+
+## Currently Working On
+
+- [ ] AI-powered learning recommendations based on performance patterns
+- [ ] Video content support with progress tracking
+- [ ] Mobile app (React Native) using shared API
+- [ ] Advanced analytics: time-series learning patterns, predictive modeling
+- [ ] Peer-to-peer study rooms with video chat
+
+## Author
+
+**Saketh Thammishetti**
+- GitHub: [@sakeththammishetti1403](https://github.com/sakeththammishetti1403)
+- Email: thammishettisaketh104@gmail.com
 
 ---
-© 2026 LevelUpED. All rights reserved.
+
+**License:** ISC
